@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<!--===================-->
+	<!-- BASIC INFORMATION -->
+	<!--===================-->
+
+	<groupId>net.sourceforge</groupId>
+	<artifactId>buildMonitor</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	<name>buildMonitor</name>
+
+	<!--==================-->
+	<!-- DEVELOPMENT TEAM -->
+	<!--==================-->
+
+	<developers>
+		<developer>
+			<id>sbrunot</id>
+			<name>Sebastien Brunot</name>
+			<organization>ILog</organization>
+			<organizationUrl>http://www.ilog.fr</organizationUrl>
+		</developer>
+	</developers>
+
+	<!--==============-->
+	<!-- DEPENDENCIES -->
+	<!--==============-->
+	
+	<dependencies>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<type>jar</type>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<type>jar</type>
+			<version>1.4</version>
+		</dependency>
+
+	</dependencies>
+
+	<!--=====================-->
+	<!-- BUILD CONFIGURATION -->
+	<!--=====================-->
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<!-- The executable jar is produced by the assembly plugin during the package phase -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<archive>
+						<manifest>
+							<mainClass>net/sourceforge/buildmonitor/Launcher</mainClass>
+							<addClasspath>true</addClasspath>
+						</manifest>
+					</archive>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>attached</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- Replace the initial jar by the executable one -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<configuration>
+					<tasks>
+						<move file="${basedir}/target/${pom.artifactId}-${pom.version}-jar-with-dependencies.jar"
+						      tofile="${basedir}/target/${pom.artifactId}-${pom.version}.jar"
+						      overwrite="true"/>
+					</tasks>
+				</configuration>
+				<executions>
+					<execution>
+						<id>replace-original-jar-by-executable-jar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+		
+</project>

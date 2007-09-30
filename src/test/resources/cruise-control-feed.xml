@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<rss version="2.0">
+<channel>
+
+<title>CruiseControl Results</title>
+<link>http://leo.ilog.fr:9080/cruisecontrol</link>
+<description>Summary of the project build results.</description>
+<language>en-us</language>
+
+<item>
+<title>engine passed 02/23/2007 21:22:42</title>
+<description>Build passed</description>
+<pubDate>02/23/2007 21:22:42</pubDate>
+<link>http://leo.ilog.fr:9080/cruisecontrol/buildresults/engine</link>
+</item>
+
+<item>
+<title>engine-v65updates passed 02/23/2007 19:14:25</title>
+<description>Build passed</description>
+<pubDate>02/23/2007 19:14:25</pubDate>
+<link>http://leo.ilog.fr:9080/cruisecontrol/buildresults/engine-v65updates</link>
+</item>
+
+<item>
+<title>init passed 02/23/2007 18:50:37</title>
+<description>Build passed</description>
+<pubDate>02/23/2007 18:50:37</pubDate>
+<link>http://leo.ilog.fr:9080/cruisecontrol/buildresults/init</link>
+</item>
+
+<item>
+<title>init-v65updates passed 02/23/2007 15:19:14</title>
+<description>Build passed</description>
+<pubDate>02/23/2007 15:19:14</pubDate>
+<link>http://leo.ilog.fr:9080/cruisecontrol/buildresults/init-v65updates</link>
+</item>
+
+<item>
+<title>installer-v65updates FAILED 02/24/2007 23:30:11</title>
+<description>Build FAILED</description>
+<pubDate>02/24/2007 23:30:11</pubDate>
+<link>http://leo.ilog.fr:9080/cruisecontrol/buildresults/installer-v65updates</link>
+</item>
+
+<item>
+<title>res passed 02/23/2007 21:52:41</title>
+<description>Build passed</description>
+<pubDate>02/23/2007 21:52:41</pubDate>
+<link>http://leo.ilog.fr:9080/cruisecontrol/buildresults/res</link>
+</item>
+
+<item>
+<title>res-v65updates passed 02/23/2007 19:21:37</title>
+<description>Build passed</description>
+<pubDate>02/23/2007 19:21:37</pubDate>
+<link>http://leo.ilog.fr:9080/cruisecontrol/buildresults/res-v65updates</link>
+</item>
+
+<item>
+<title>studio passed 02/24/2007 07:44:28</title>
+<description>Build passed</description>
+<pubDate>02/24/2007 07:44:28</pubDate>
+<link>http://leo.ilog.fr:9080/cruisecontrol/buildresults/studio</link>
+</item>
+
+<item>
+<title>studio-v65updates passed 02/23/2007 20:14:01</title>
+<description>Build passed</description>
+<pubDate>02/23/2007 20:14:01</pubDate>
+<link>http://leo.ilog.fr:9080/cruisecontrol/buildresults/studio-v65updates</link>
+</item>
+
+<item>
+<title>teamserver passed 02/24/2007 01:06:26</title>
+<description>Build passed</description>
+<pubDate>02/24/2007 01:06:26</pubDate>
+<link>http://leo.ilog.fr:9080/cruisecontrol/buildresults/teamserver</link>
+</item>
+
+<item>
+<title>teamserver-v65updates passed 02/23/2007 20:27:50</title>
+<description>Build passed</description>
+<pubDate>02/23/2007 20:27:50</pubDate>
+<link>http://leo.ilog.fr:9080/cruisecontrol/buildresults/teamserver-v65updates</link>
+</item>
+
+</channel>
+</rss>

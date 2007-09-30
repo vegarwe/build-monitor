@@ -1,0 +1,151 @@
+*******************************************
+* WARNING: THIS IS A WORK IN PROGRESS !!! *
+*******************************************
+
+=================================================================================================
+ Here is the test process to follow to ensure the quality of a new release before delivering it:
+=================================================================================================
+
+===============
+ SETUP
+===============
+* Install a new bamboo server instance using the installer and then launch the bamboo server (do not complete the bamboo setup wizard)
+* Launch another web server (with no bamboo application deployed in it !) that listen to another port
+
+=======================
+ TESTING INTIAL LAUNCH
+=======================
+* Remove any bamboo-monitor.properties file that might already exists in your home directory
+* Launch build monitor by double clicking the jar file
+* => The options panel must be displayed, and no icon should be displayed in the system tray for build monitor
+* click close
+* => The JVM process must have exited
+* Launch build monitor using the command "java -jar THE_BUILD_MONITOR_JAR"
+* => The options panel must be displayed, and no icon should be displayed in the system tray for build monitor
+* close the options panel (not using the OK or CANCEL buttons)
+* => The JVM process must have exited
+
+===============================
+ TESTING INITIAL OPTIONS PANEL
+===============================
+* launch build monitor
+* => The options panel must be displayed, and no icon should be displayed in the system tray for build monitor
+* => The baseURL field should display a default URL "http://localhost:8085"
+* => The baseURL field should have the focus
+* => The Username field should be empty
+* => The Password field should be empty
+* => The Update Period field should display a default value of 5 minutes
+* => No field should be reported in error (red value or red background)
+* => The OK button should be disabled
+* select "ht" in the base URL field and type "f"
+* => The field now display "ftp://localhost:8085" in red
+* put the mouse cursor over the base URL field and stay there a few seconds
+* => A tooltip appears and displays "ftp://localhost:8085 is not a valid http URL !"
+* select "ftp" in the base URL field and type "http"
+* => The field is not in error anymore
+* move the cursor at the end of "http://localhost:8085" and type "!"
+* => The field now display "http://localhost:8085!" in red
+* put the mouse cursor over the base URL field and stay there a few seconds
+* => A tooltip appears and displays "http://localhost:8085! is not a valid http URL !"
+* remove the "!" at the end of the URL
+* => The field is not in error anymore
+* press TAB
+* => The Username field should now have the focus
+* type "a"
+* => The OK button should be enabled now (for the first time since the beginning)
+* remove "a"
+* => The Username field is now in error (red background)
+* => The OK button should be disabled again
+* put the mouse cursor over the Username field and stay there a few seconds
+* => A tooltip appears and displays "username is mandatory to connect to the bamboo server !"
+* type "a"
+* => The field is not in error anymore
+* => The OK button is enabled again
+* press TAB
+* => The Password field should now have the focus
+* type "a"
+* remove "a"
+* => A tooltip appears and displays "password is mandatory to connect to the bamboo server !"
+* type "a"
+* => The field is not in error anymore
+* press TAB
+* => The Update period field should now have the focus
+* remove the default value of 5 in the field
+* press TAB
+* => the OK button is now selected, and the Update period field display the value of 5
+* replace 5 in the Update period field by the letter a
+* press TAB
+* => the OK button is now selected, and the Update period field display the value of 5
+* replace 5 in the Update period field by -10
+* press TAB
+* => the OK button is now selected, and the Update period field display the value of 1
+* replace 1 in the Update period field by 2
+* press TAB
+* => the OK button is now selected, and the Update period field display the value of 2
+* replace 2 in the Update period field by 1
+* Click the OK button
+* => The options dialog is now closed, and an icon appears for the application in the system tray (ignore the displayed errors)
+* => A file named "bamboo-monitor.properties" should have been created in your home directory. Its content is as following (expect for the date / hours):
+
+#File last updated on Fri Sep 21 14:04:05 CEST 2007
+#Fri Sep 21 14:04:05 CEST 2007
+bamboo.username=a
+bamboo.password=a
+update.period.in.seconds=60
+bamboo.server.base.url=http\://localhost\:8085
+
+* Quit the application (right click the system tray icon and choose "Exit -> really, please !"
+
+===================================
+ TESTING ERRORS IN PROPERTIES FILE
+===================================
+* modify the content of the "bamboo-monitor.properties" file with the following content:
+
+#File last updated on Fri Sep 21 14:04:05 CEST 2007
+#Fri Sep 21 14:04:05 CEST 2007
+bamboo.username=
+bamboo.password=
+update.period.in.seconds=azerty
+bamboo.server.base.url=ftp\://localhost\:8085
+
+* launch the application
+* => the System tray icon is displayed, and a message signal an error: "Problem: the base URL defined for the Bamboo server in Options is not an http URL. Double click here to edit Options.".
+* Double click the error message
+* => The option panel should be displayed on screen
+* => The three fields Base URL, Username and Password are in error
+* => Base URL contains "ftp://localhost:8085"
+* => Username and password are empty
+* click the "Cancel" button 
+* put the mouse cursor on the system tray icon and wait a few seconds
+* => A tooltip appears with the same message
+* Double click the System tray icon
+* => The option panel should be displayed on screen
+* => The three fields Base URL, Username and Password are in error
+* => Base URL contains "ftp://localhost:8085"
+* => Username and password are empty
+* Enter Base URL "http://localhost:8085"
+* click the "Ok" button 
+
+===========================
+ TESTING CONNECTION ERRORS
+===========================
+* wait a few moment (1 minute maximum)
+* => A new error message is displayed: "Your bamboo server installation is not finished ! Double click here to complete the Bamboo Setup Wizard !"
+* Double click the error message
+* => Your browser should be opened and displays the Bamboo Setup Wizard page
+* Close your browser
+* put the mouse cursor on the system tray icon and wait a few seconds
+* => A tooltip appears with the same message
+* Double click the System tray icon
+* => Your browser should be opened and displays the Bamboo Setup Wizard page
+* TO BE CONTINUED: "CANNOT FIND HOST ON THE NETWORK"
+* TO BE CONTINUED: "CANNOT CONNECT TO PORT XYZ ON HOST"
+* TO BE CONTINUED: "CANNOT FIND BAMBOO REST API"
+* TO BE CONTINUED: "NETWORK ERROR: CONNECTION LOST"
+* TO BE CONTINUED (?): "UNEXPECTED CONTENT FOR ERROR"
+* TO BE CONTINUED: AUTHENTICATION LOST (SESSION TIMEOUT)
+
+===========================
+ TESTING REPORTING
+===========================
+* TO BE CONTINUED...
