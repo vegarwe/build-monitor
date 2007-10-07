@@ -799,8 +799,8 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
 		this.currentlyReportedMonitoringException = null;
 		
 		// 4) If situation have changed, notify the end user !
-		int numberOfNewFailingBuilds = 0;
-		int numberOfFixedBuilds = 0;
+		StringBuffer newFailingBuilds = new StringBuffer();
+		StringBuffer fixedBuilds = new StringBuffer();
 		for (BuildReport currentBuildReport : theBuildsStatus)
 		{
 			for (BuildReport previousBuildReport : this.previousBuildReports)
@@ -811,45 +811,26 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
 					{
 						if (currentBuildReport.getStatus() == BuildReport.Status.OK)
 						{
-							numberOfFixedBuilds++;
+							fixedBuilds.append(currentBuildReport.getName() + " is fixed.\n");
 						}
 						else
 						{
-							numberOfNewFailingBuilds++;
+							newFailingBuilds.append(currentBuildReport.getName() + " is failing.\n");
 						}
 					}
 				}
 			}
 		}
-		if ((numberOfFixedBuilds > 0) || (numberOfNewFailingBuilds > 0))
+		if ((newFailingBuilds.length() > 0) || (fixedBuilds.length() > 0))
 		{
-			StringBuffer newSitutationMessage = new StringBuffer();
-			if (numberOfFixedBuilds > 0)
+			MessageType messageType = MessageType.INFO;
+			if (newFailingBuilds.length() > 0)
 			{
-				if (numberOfFixedBuilds == 1)
-				{
-					newSitutationMessage.append("One build fixed.\n");
-				}
-				else
-				{
-					newSitutationMessage.append(numberOfFixedBuilds + " builds fixed.\n");
-				}
+				messageType = MessageType.WARNING;
 			}
-			if (numberOfNewFailingBuilds > 0)
-			{
-				if (numberOfNewFailingBuilds == 1)
-				{
-					newSitutationMessage.append("One new failing builds.\n");
-				}
-				else
-				{
-					newSitutationMessage.append(numberOfNewFailingBuilds + " new failing builds.\n");
-				}
-			}
-			newSitutationMessage.append("Right click the tray icon to display the detailed build status.");
-			javax.swing.SwingUtilities.invokeLater(new TrayIconUpdater(null, null, "Build situation have changed !", newSitutationMessage.toString(), MessageType.INFO, null));
+			javax.swing.SwingUtilities.invokeLater(new TrayIconUpdater(null, null, "Build situation have changed !", newFailingBuilds.toString() + fixedBuilds.toString() + "Right click the tray icon to display the detailed build status.", messageType, null));
 		}
-		this.previousBuildReports = theBuildsStatus;
+		this.previousBuildReports = buildsStatus;
 	}
 
 

@@ -1,0 +1,18 @@
+<document>
+	<properties>
+		<author email="sbrunot@google.com">Sebastien Brunot</author>
+		<title>Build Monitor</title>
+	</properties>
+	<body>
+		<section name="Build Monitor">
+		Build monitor is a Java 6 desktop application that monitor continuous builds. It supports the following continuous integration servers:
+		<ul>
+			<li><a href="http://www.atlassian.com/software/bamboo/">Atlassian Bamboo</a></li>
+			<li><a href="http://cruisecontrol.sourceforge.net/">Cruise Control</a> (under development)</li>
+		</ul>
+		You can <a href="http://sourceforge.net/project/showfiles.php?group_id=206338">download it</a> on sourceforge.
+		<br/>
+		Use the navigation menu on the left to browse the online documentation of Build Monitor.
+		</section>
+	</body>
+</document>

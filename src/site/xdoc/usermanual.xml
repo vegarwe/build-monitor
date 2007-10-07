@@ -1,0 +1,148 @@
+<document>
+	<properties>
+		<author email="sbrunot@google.com">Sebastien Brunot</author>
+		<title>Build Monitor User Manual</title>
+	</properties>
+	<body>
+		<section name="Pre requisites">
+		Build Monitor uses the new desktop integration features of Java 6.<br/>
+		As a consequence, you must <a href="http://java.sun.com/javase/downloads/index.jsp">install Java 6 on your computer</a> to be able to launch Build Monitor.
+		</section>
+		<section name="Installing Build Monitor">
+		Build Monitor is packaged in a single .jar file that contains all it needs to run.<br/>
+		As a consequence, you just have to <a href="http://sourceforge.net/project/showfiles.php?group_id=206338">Download the Build Monitor .jar file</a> to your computer: no post-download installation process
+		is needed.
+		</section>
+		<section name="Launching Build Monitor">
+		To launch Build Monitor, double click its .jar file or launch it using the following command line: <code>java -jar build-monitor-VERSION.jar</code> (where
+		VERSION is the version number of Build Monitor).
+		</section>
+		<section name="Build Monitor Configuration">
+		The first time you launch Build Monitor, the <em>Build server monitoring parameters</em> dialog windows opens:
+		<br/>
+		<br/>
+		<img src="images/bamboo-server-monitoring-parameters.png"/>
+		<br/>
+		<br/>
+		The different values you have to provide for monitoring a Bamboo server are as follow:
+		<br/>
+		<br/>
+		<table>
+			<tr>
+				<th>Field Name</th>
+				<th>What is it ?</th>
+			</tr>
+			<tr>
+				<td>Base URL</td>
+				<td>This is the <a href="http://confluence.atlassian.com/display/BAMBOO/8.4+Specifying+Bamboo%27s+URL"> base URL of your Bamboo server installation</a>. Once entered, click the <em>Open</em> button to open your web browser: if the URL is correct, your Bamboo server home page should be displayed in the web browser.</td>
+			</tr>
+			<tr>
+				<td>Username</td>
+				<td>Build monitor uses the <a href="http://confluence.atlassian.com/display/BAMBOO/8.6+Enabling+Bamboo%27s+Remote+API">Bamboo remote API</a> to monitor your builds. This API can only be called by authenticated user, so you have to input here the name of a valid <a href="http://confluence.atlassian.com/display/BAMBOO/5.01+Creating+a+User">Bamboo user</a>.</td>
+			</tr>
+			<tr>
+				<td>Password</td>
+				<td>The password of the Bamboo user.</td>
+			</tr>
+			<tr>
+				<td>Update period</td>
+				<td>The period, in minute, at which build monitor should refresh the build status.</td>
+			</tr>
+		</table>
+		<br/>
+		<br/>
+		When you're done with the configuration, click the <em>OK</em> button to save it (Build Monitor will then create a file named <em>bamboo-monito.properties</em> in your user directory).
+		Notice that you have to enter a value for each field to be able to click the <em>OK</em> button.
+		<br/>
+		<br/>
+		If you want to change your configuration at a later time, just click the <em>Options</em> menu entry in the <a href="#The Build Monitor System Tray menu">Build Monitor System Tray menu</a> to open this dialog windows once again.
+		</section>
+		<section name="The Build Monitor System Tray icon">
+		Once configured and running, Build Monitor displays a small icon in the System Tray. This icon depends on the state of
+		Build Monitor and on the state of the monitored builds:
+			<table>
+				<tr>
+					<th>Icon</th>
+					<th>What does it means ?</th>
+					<th>Action when double clicked</th>
+				</tr>
+				<tr>
+					<td><img src="images/init-system-tray-icon.png"/></td>
+					<td>The application is loading its configuration file or is initializing the build status.</td>
+					<td>Double clicking the System Tray icon opens your Bamboo server home page in a web browser.</td>
+				</tr>
+				<tr>
+					<td><img src="images/success-build-system-tray-icon.png"/></td>
+					<td>All builds on the monitored server are successfull.<br/><br/>Leave your mouse cursor on the icon to display a tooltip with the time of the last buid status update and the number of builds.<br/><br/>Right click the System Tray icon to display the <a href="#The Build Monitor System Tray menu">Build Monitor System Tray menu</a> and have a detailed list of all the builds.</td>
+					<td>Double clicking the System Tray icon opens your Bamboo server home page in a web browser.</td>
+				</tr>
+				<tr>
+					<td><img src="images/failed-build-system-tray-icon.png"/></td>
+					<td>At least one build on the monitored server is failing.<br/><br/>Leave your mouse cursor on the icon to display a tooltip with the time of the last buid status update and the number of failing builds.<br/><br/>Right click the System Tray icon to display the <a href="#The Build Monitor System Tray menu">Build Monitor System Tray menu</a> and have a detailed list of all the builds.</td>
+					<td>Double clicking the System Tray icon opens your Bamboo server home page in a web browser.</td>
+				</tr>
+				<tr>
+					<td><img src="images/error-system-tray-icon.png"/></td>
+					<td>Build monitor has encountered a problem.<br/><br/>Leave your mouse cursor on the icon to display a tooltip that explains the problem.</td>
+					<td>What happens when you double click the System Tray icon depends on the problem.<br/><br/>If the problem might be resolved by updating the configuration, the <em>Build server monitoring parameters</em> dialog windows opens.<br/><br/>If the problem might be resolved by changing some Bamboo server parameters, the Bamboo <em>Administration page</em> will open in a browser.</td>
+				</tr>
+			</table>
+		</section>
+		<section name="The Build Monitor notifications">
+		Apart from notifying you of its states and of the current build status by the <a href="#">System Tray icon</a>, Buid Monitor use Balloon messages to inform you:
+		<br/>
+		<br/>
+		<table>
+			<tr>
+				<td><img src="images/notification-build-situation-changed.png"/></td>
+				<td>That the build situation has changed (build(s) fixed and / or new failing build(s))</td>
+			</tr>
+			<tr>
+				<td><img src="images/notification-error.png"/></td>
+				<td>That it encountered a problem.</td>
+			</tr>
+		</table>
+		</section>
+		<section name="The Build Monitor System Tray menu">
+		When you right click the <a href="#The Build Monitor System Tray icon">System Tray icon</a>, the System Tray menu shows up:
+		<br/>
+		<br/>
+		<img src="images/system-tray-menu.png"/>
+		<br/>
+		<br/>
+		The following menu entries are available:
+		<br/>
+		<br/>
+		<table>
+			<tr>
+				<td>Bamboo server main page</td>
+				<td>Opens the Bamboo server main page in a web browser.</td>
+			</tr>
+			<tr>
+				<td>Update build status now !</td>
+				<td>Refresh the build status.</td>
+			</tr>
+			<tr>
+				<td>Sort builds</td>
+				<td>Sort the build results by age (default value) or by name. This action updates the build status.</td>
+			</tr>
+			<tr>
+				<td>Options...</td>
+				<td>Open the <em>Build server monitoring parameters</em> dialog window.</td>
+			</tr>
+			<tr>
+				<td>Builds menu entries</td>
+				<td>Click a build menu entry to open your web browser on the bamboo page of the last build for this build project. Failing builds are displayed in <b>bold</b>.</td>
+			</tr>
+			<tr>
+				<td>About...</td>
+				<td>Displays informations about the current version of Build Monitor.</td>
+			</tr>
+			<tr>
+				<td>Exit</td>
+				<td>Exit Build Monitor.</td>
+			</tr>
+		</table>
+		</section>
+	</body>
+</document>

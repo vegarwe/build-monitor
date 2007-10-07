@@ -1,0 +1,27 @@
+<project name="JRules Testing">
+	<bannerLeft>
+		<src>/images/build-monitor-logo.png</src>
+		<href>/index.html</href>
+	</bannerLeft>
+	<skin>
+		<groupId>org.apache.maven.skins</groupId>
+		<artifactId>maven-stylus-skin</artifactId>
+	</skin>
+	<poweredBy>
+	  <logo name="Maven" href="http://maven.apache.org/"
+	        img="http://maven.apache.org/images/logos/maven-feather.png"/>
+	</poweredBy>
+	<publishDate format="dd MMM yyyy HH:mm" />
+	<version/>
+	<body>
+		<links>
+			<item name="download" href="http://sourceforge.net/project/showfiles.php?group_id=206338"/>
+			<item name="sourceforge" href="http://sourceforge.net/projects/build-monitor/"/>
+		</links>
+		<menu name="Overview">
+			<item name="Introduction" href="index.html"/>
+			<item name="User manual" href="usermanual.html"/>
+		</menu>
+		<menu ref="reports"/>
+	</body>
+</project>

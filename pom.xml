@@ -7,10 +7,12 @@
 	<!--===================-->
 
 	<groupId>net.sourceforge</groupId>
-	<artifactId>buildMonitor</artifactId>
+	<artifactId>build-monitor</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<name>buildMonitor</name>
+	<name>Build Monitor</name>
+	<description>Build monitor is a Java 6 desktop application that monitor continuous builds.</description>
+	<url>http://build-monitor.sourceforge.net/</url>
 
 	<!--==================-->
 	<!-- DEVELOPMENT TEAM -->
@@ -20,10 +22,88 @@
 		<developer>
 			<id>sbrunot</id>
 			<name>Sebastien Brunot</name>
-			<organization>ILog</organization>
-			<organizationUrl>http://www.ilog.fr</organizationUrl>
+			<email>sbrunot@gmail.com</email>
+			<url>http://www.linkedin.com/pub/1/646/30b</url>
 		</developer>
 	</developers>
+
+	<!--=========-->
+	<!-- LICENSE -->
+	<!--=========-->
+
+	<licenses>
+	  <license>
+	    <name>Apache 2</name>
+	    <url>NOTICE</url>
+	    <distribution>manual</distribution>
+	  </license>
+	</licenses>
+
+	<!--==================-->
+	<!-- ISSUE MANAGEMENT -->
+	<!--==================-->
+
+	<issueManagement>
+		<system>Sourceforge</system>
+		<url>http://sourceforge.net/tracker/?group_id=206338</url>
+	</issueManagement>
+
+	<!--====================-->
+	<!-- SOURCES REPOSITORY -->
+	<!--====================-->
+
+	<scm>
+		<connection>scm:cvs:pserver:anoncvs:@build-monitor.cvs.sourceforge.net:/cvsroot/build-monitor:build-monitor</connection>
+		<tag>HEAD</tag>
+		<url>http://build-monitor.cvs.sourceforge.net/build-monitor/build-monitor/</url>
+	</scm>
+
+	<!--===========-->
+	<!-- REPORTING -->
+	<!--===========-->
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>taglist-maven-plugin</artifactId>
+				<configuration>
+					<tags>
+						<tag>@todo</tag>
+						<tag>TODO</tag>
+						<tag>@fixme</tag>
+						<tag>FIXME</tag>
+					</tags>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>javancss-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<artifactId>maven-changelog-plugin</artifactId>
+				<configuration>
+					<dateFormat>yyyy-MM-dd HH:mm:ss</dateFormat>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<artifactId>maven-clover-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<artifactId>maven-javadoc-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<artifactId>maven-jxr-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</reporting>
 
 	<!--==============-->
 	<!-- DEPENDENCIES -->
