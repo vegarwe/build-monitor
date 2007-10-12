@@ -8,7 +8,7 @@
 
 	<groupId>net.sourceforge</groupId>
 	<artifactId>build-monitor</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>1.0-PREVIEW</version>
 	<packaging>jar</packaging>
 	<name>Build Monitor</name>
 	<description>Build monitor is a Java 6 desktop application that monitor continuous builds.</description>
@@ -58,6 +58,17 @@
 		<url>http://build-monitor.cvs.sourceforge.net/build-monitor/build-monitor/</url>
 	</scm>
 
+	<!--=========================-->
+	<!-- DISTRIBUTION MANAGEMENT -->
+	<!--=========================-->
+	<distributionManagement>
+		<site>
+			<id>sourceforge.website</id>
+			<name>Sourceforge Web Site</name>
+			<url>scp://shell.sourceforge.net/home/groups/b/bu/build-monitor/htdocs</url>
+		</site>
+	</distributionManagement>
+	
 	<!--===========-->
 	<!-- REPORTING -->
 	<!--===========-->
@@ -148,6 +159,7 @@
 				<configuration>
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
+						<descriptorRef>project</descriptorRef>
 					</descriptorRefs>
 					<archive>
 						<manifest>
