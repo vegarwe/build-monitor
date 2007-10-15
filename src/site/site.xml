@@ -1,4 +1,4 @@
-<project name="JRules Testing">
+<project name="Build Monitor">
 	<bannerLeft>
 		<src>/images/build-monitor-logo.png</src>
 		<href>/index.html</href>
