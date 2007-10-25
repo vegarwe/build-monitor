@@ -31,6 +31,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
@@ -43,9 +44,7 @@ import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
 
-import net.sourceforge.buildmonitor.monitors.BambooMonitor;
 import net.sourceforge.buildmonitor.monitors.Monitor;
 
 import org.joda.time.LocalDateTime;
@@ -61,7 +60,7 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
 	//////////////////////////////
 	// Constants
 	//////////////////////////////
-
+	
 	private static final String MESSAGES_BASE_NAME = "messages/GUIStrings";
 
 	private static final String IMAGE_MONITORING_EXCEPTION = "images/network-offline.png";
@@ -477,6 +476,33 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
 	private List<BuildReport> previousBuildReports = new ArrayList<BuildReport>();
 	
 	//////////////////////////////
+	// Constructor
+	//////////////////////////////
+
+	/**
+	 * Create a new instance of BuildMonitorImpl
+	 * @param theMonitorImplementationClass the implementation of Monitor to use
+	 */
+	public BuildMonitorImpl(Class<? extends Monitor> theMonitorImplementationClass)
+	{
+		super();
+
+		// load messages resource file
+		this.messages = ResourceBundle.getBundle(MESSAGES_BASE_NAME, Locale.getDefault(), this.getClass().getClassLoader());
+
+		try
+		{
+			Constructor<?> monitorConstructor = theMonitorImplementationClass.getConstructor(new Class[] {BuildMonitor.class});
+			this.monitor = (Monitor) monitorConstructor.newInstance(new Object[] {this});
+		}
+		catch(Exception e)
+		{
+			// TODO: use a nice formatted message for the end user ?
+			panic(e);
+		}
+	}
+
+	//////////////////////////////
 	// Runnable implementation
 	//////////////////////////////
 	
@@ -487,9 +513,6 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
 	{
 		try
 		{
-			// load messages resource file
-			this.messages = ResourceBundle.getBundle(MESSAGES_BASE_NAME, Locale.getDefault(), this.getClass().getClassLoader());
-
 			// load image resources
 			this.initialIcon = Toolkit.getDefaultToolkit().getImage(this.getClass().getClassLoader().getResource(IMAGE_INITIAL_ICON));
 			this.monitoringExceptionIcon = Toolkit.getDefaultToolkit().getImage(this.getClass().getClassLoader().getResource(IMAGE_MONITORING_EXCEPTION));
@@ -500,11 +523,9 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
 			// create the system tray icon
 			if (SystemTray.isSupported())
 			{
-				// Set platform look & feel
-				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-
 				// create the monitor instance (TODO: PROMPT THE USER / USE A PROPERTY TO DEFINE THE KIND OF MONITOR TO CREATE ?
-				this.monitor = new BambooMonitor(this);
+				// TODO: WHAT WILL BE THE LOOK & FEEL ???
+				// this.monitor = new BambooMonitor(this);
 				this.openBuildServerHomePageActionListener = new ActionListener()
 				{
 					public void actionPerformed(ActionEvent e)

@@ -9,6 +9,7 @@
 		<ul>
 			<li><a href="http://www.atlassian.com/software/bamboo/">Atlassian Bamboo</a></li>
 			<li><a href="http://cruisecontrol.sourceforge.net/">Cruise Control</a> (under development)</li>
+			<li><a href="http://cruisecontrolrb.thoughtworks.com/">CruiseControl.rb</a> (under development)</li>
 		</ul>
 		You can <a href="http://sourceforge.net/project/showfiles.php?group_id=206338">download it</a> on sourceforge.
 		<br/>

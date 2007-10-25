@@ -15,14 +15,20 @@
  */
 package net.sourceforge.buildmonitor.monitors;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.swing.JOptionPane;
 
@@ -30,6 +36,8 @@ import net.sourceforge.buildmonitor.BuildMonitor;
 import net.sourceforge.buildmonitor.BuildReport;
 import net.sourceforge.buildmonitor.MonitoringException;
 import net.sourceforge.buildmonitor.BuildReport.Status;
+import net.sourceforge.buildmonitor.dialogs.BambooPropertiesDialog;
+import net.sourceforge.buildmonitor.dialogs.CruiseControlPropertiesDialog;
 import net.sourceforge.buildmonitor.utils.RssFeedDocument;
 import net.sourceforge.buildmonitor.utils.RssFeedItem;
 import net.sourceforge.buildmonitor.utils.RssFeedReader;
@@ -43,9 +51,165 @@ import net.sourceforge.buildmonitor.utils.RssFeedReader;
  */
 public class CruiseControlRssMonitor implements Monitor
 {
-	// ////////////////////////////////
+	//////////////////////////////
+	// Nested classes
+	//////////////////////////////
+
+	/**
+	 * Set of properties needed to monitor a Cruise Control server.
+	 */
+	private class CruiseControlProperties
+	{
+		//////////////////////////////
+		// Constants
+		//////////////////////////////
+
+		private static final String CC_FEED_DATE_FORMAT_PROPERTY_KEY = "cc.feed.date.format";
+
+		private static final String UPDATE_PERIOD_IN_SECONDS_PROPERTY_KEY = "update.period.in.seconds";
+
+		private static final String CC_RSS_FEED_URL_PROPERTY_KEY = "cc.rss.feed.url";
+
+		private static final String USER_PROPERTIES_FILE = "cc-monitor.properties";
+
+		//////////////////////////////
+		// Instance attributes
+		//////////////////////////////
+
+		private String rssFeedUrl = null;
+		
+		private String feedDateFormat = null;
+		
+		private Integer updatePeriodInSeconds = null;
+		
+		//////////////////////////////
+		// Getters and Setters
+		//////////////////////////////
+
+		/**
+		 * Get URL to the cc server rss feed
+		 * @return the URL to the cc server rss feed
+		 */
+		public String getRssFeedUrl()
+		{
+			return this.rssFeedUrl;
+		}
+
+		/**
+		 * Set URL to the cc server rss feed
+		 * @param theRssFeedUrl the URL to the cc server rss feed
+		 */
+		public void setRssFeedUrl(String theRssFeedUrl)
+		{
+			this.rssFeedUrl = theRssFeedUrl;
+		}
+
+		/**
+		 * Get the period (in seconds) of build status update
+		 * @return the period (in seconds) of build status update
+		 */
+		public Integer getUpdatePeriodInSeconds()
+		{
+			return this.updatePeriodInSeconds;
+		}
+
+		/**
+		 * Set the period (in seconds) of build status update
+		 * @param theUpdatePeriodInSeconds the period (in seconds) of build status update
+		 */
+		public void setUpdatePeriodInSeconds(Integer theUpdatePeriodInSeconds)
+		{
+			this.updatePeriodInSeconds = theUpdatePeriodInSeconds;
+		}
+
+		/**
+		 * Get the cc feed date format
+		 * @return the cc feed date format
+		 * @see DateFormat
+		 */
+		public String getFeedDateFormat()
+		{
+			return this.feedDateFormat;
+		}
+
+		/**
+		 * Set the cc feed date format
+		 * @param theFeedDateFormat the cc feed date format
+		 * @see DateFormat
+		 */
+		public void setFeedDateFormat(String theFeedDateFormat)
+		{
+			this.feedDateFormat = theFeedDateFormat;
+		}
+		
+		//////////////////////////////
+		// File persistence
+		//////////////////////////////
+		
+		/**
+		 * Load the properties from the {@link #USER_PROPERTIES_FILE} file in the
+		 * user home directory.
+		 */
+		public void loadFromFile() throws FileNotFoundException, IOException
+		{
+			// Load the content of the properties file into a Properties object
+			Properties ccMonitorProperties = new Properties();
+			File ccMonitorPropertiesFile = new File(System.getProperty("user.home"), USER_PROPERTIES_FILE);
+			if (ccMonitorPropertiesFile.exists())
+			{
+				FileInputStream ccMonitorPropertiesFileIS = new FileInputStream(ccMonitorPropertiesFile);
+				ccMonitorProperties.load(ccMonitorPropertiesFileIS);
+				ccMonitorPropertiesFileIS.close();
+			}
+			
+			// Update the attributes using the values defined in the properties file
+			synchronized (this)
+			{
+				setRssFeedUrl(ccMonitorProperties.getProperty(CC_RSS_FEED_URL_PROPERTY_KEY));
+
+				String updatePeriodInSecondsAsString = ccMonitorProperties.getProperty(UPDATE_PERIOD_IN_SECONDS_PROPERTY_KEY);
+				if (updatePeriodInSecondsAsString != null)
+				{
+					try
+					{
+						setUpdatePeriodInSeconds(Integer.parseInt(updatePeriodInSecondsAsString));
+					}
+					catch(NumberFormatException e)
+					{
+						// Use a default value
+						setUpdatePeriodInSeconds(300);
+					}
+				}
+				setFeedDateFormat(ccMonitorProperties.getProperty(CC_FEED_DATE_FORMAT_PROPERTY_KEY));
+			}
+		}
+		
+		/**
+		 * Save the properties from the {@link #USER_PROPERTIES_FILE} file in the
+		 * user home directory.
+		 */
+		public void saveToFile() throws FileNotFoundException, IOException
+		{
+			// Build a Properties object that contains the values of the cc properties
+			Properties ccMonitorProperties = new Properties();
+			synchronized (this)
+			{
+				ccMonitorProperties.setProperty(CC_RSS_FEED_URL_PROPERTY_KEY, this.rssFeedUrl);
+				ccMonitorProperties.setProperty(CC_FEED_DATE_FORMAT_PROPERTY_KEY, this.feedDateFormat);
+				ccMonitorProperties.setProperty(UPDATE_PERIOD_IN_SECONDS_PROPERTY_KEY, "" + this.getUpdatePeriodInSeconds());
+			}
+			
+			// Store the Properties object in the file
+			File ccMonitorPropertiesFile = new File(System.getProperty("user.home"), USER_PROPERTIES_FILE);
+			FileOutputStream ccMonitorPropertiesOutputStream = new FileOutputStream(ccMonitorPropertiesFile);
+			ccMonitorProperties.store(ccMonitorPropertiesOutputStream, "File last updated on " + new Date());
+			ccMonitorPropertiesOutputStream.close();
+		}
+	}
+
+	//////////////////////////////////
 	// Instance attributes
-	// ////////////////////////////////
+	//////////////////////////////////
 
 	/**
 	 * The RssFeedReader instance that we use for monitoring CC rss feed.
@@ -65,16 +229,50 @@ public class CruiseControlRssMonitor implements Monitor
 	/**
 	 * The instance of the build monitor application this thread is running for
 	 */
-	private BuildMonitor applicationInstance = null;
+	private BuildMonitor buildMonitorInstance = null;
 
 	/**
 	 * Should the thread stop its execution ?
 	 */
 	private boolean stop = false;
+	
+	private CruiseControlProperties ccProperties = new CruiseControlProperties();
+	
+	private CruiseControlPropertiesDialog optionsDialog = null;
 
-	// ////////////////////////////////
+	//////////////////////////////////
 	// Constructor
-	// ////////////////////////////////
+	//////////////////////////////////
+
+	/**
+	 * Create a new instance.
+	 * 
+	 * @param theBuildMonitorInstance
+	 *            the build monitor instance this thread is running for
+	 */
+	public CruiseControlRssMonitor(BuildMonitor theBuildMonitorInstance) throws FileNotFoundException, IOException
+	{
+		this.buildMonitorInstance = theBuildMonitorInstance;
+
+		// build the options dialog
+		this.optionsDialog = new CruiseControlPropertiesDialog(null, true);
+		this.optionsDialog.setIconImage(this.buildMonitorInstance.getDialogsDefaultIcon());
+		this.optionsDialog.setTitle("CruiseControl server monitoring parameters");
+		this.optionsDialog.pack();
+
+		// load the monitor properties
+		this.ccProperties.loadFromFile();
+
+		// if at least one of the properties is not defined, open a window to ask for their definition
+		if ((this.ccProperties.getRssFeedUrl() == null) || (this.ccProperties.getUpdatePeriodInSeconds() == null) || (this.ccProperties.getFeedDateFormat() == null))
+		{
+			displayOptionsDialog(true);
+			if (this.optionsDialog.getLastClickedButton() != CruiseControlPropertiesDialog.BUTTON_OK)
+			{
+				System.exit(0);
+			}
+		}
+	}
 
 	/**
 	 * Create a new instance.
@@ -87,22 +285,22 @@ public class CruiseControlRssMonitor implements Monitor
 	 *            period in seconds between to checks of the rss feed to update
 	 *            the build status
 	 */
-	public CruiseControlRssMonitor(BuildMonitor theApplicationInstance,
-			URL theUrlToTheCruiseControlRssFeed,
-			DateFormat theRssFeedDateFormat, int theUpdatePeriodInSeconds)
-	{
-		this.applicationInstance = theApplicationInstance;
-		this.rssFeedReader = new RssFeedReader(theUrlToTheCruiseControlRssFeed,
-				theRssFeedDateFormat);
-		this.updatePeriodInSeconds = theUpdatePeriodInSeconds;
-	}
+//	public CruiseControlRssMonitor(BuildMonitor theApplicationInstance,
+//			URL theUrlToTheCruiseControlRssFeed,
+//			DateFormat theRssFeedDateFormat, int theUpdatePeriodInSeconds)
+//	{
+//		this.applicationInstance = theApplicationInstance;
+//		this.rssFeedReader = new RssFeedReader(theUrlToTheCruiseControlRssFeed,
+//				theRssFeedDateFormat);
+//		this.updatePeriodInSeconds = theUpdatePeriodInSeconds;
+//	}
 
-	// ////////////////////////////////
+	//////////////////////////////////
 	// Monitor implementation
-	// ////////////////////////////////
+	//////////////////////////////////
 
 	/**
-	 * TODO: IMPLEMENTS AND DOCUMENTS ME !
+	 * {@inheritDoc}
 	 */
 	public void run()
 	{
@@ -115,7 +313,7 @@ public class CruiseControlRssMonitor implements Monitor
 				updateBuildStatusGui();
 			} catch (MonitoringException e)
 			{
-				this.applicationInstance.reportMonitoringException(e);
+				this.buildMonitorInstance.reportMonitoringException(e);
 			}
 
 			// wait before updating the build status again
@@ -129,7 +327,7 @@ public class CruiseControlRssMonitor implements Monitor
 	}
 
 	/**
-	 * TODO: DO SOMETHING BETTER HERE.... Stop the thread execution
+	 * {@inheritDoc}
 	 */
 	public void stop()
 	{
@@ -187,12 +385,12 @@ public class CruiseControlRssMonitor implements Monitor
 		return "Cruise Control";
 	}
 
-	// ////////////////////////////////
+	//////////////////////////////////
 	// Utilities methods
-	// ////////////////////////////////
+	//////////////////////////////////
 
 	/**
-	 * TODO: IMPLEMENTS ME AND DOCUMENT ME !
+	 * TODO: DOCUMENT ME !
 	 * 
 	 */
 	protected void updateStatus() throws MonitoringException
@@ -256,7 +454,7 @@ public class CruiseControlRssMonitor implements Monitor
 			buildsReport.add(currentReport);
 		}
 
-		this.applicationInstance.updateBuildStatus(buildsReport);
+		this.buildMonitorInstance.updateBuildStatus(buildsReport);
 	}
 
 	/**
@@ -269,4 +467,90 @@ public class CruiseControlRssMonitor implements Monitor
 		return this.lastBuildsStatus;
 	}
 
+	//////////////////////////////
+	// Private methods
+	//////////////////////////////
+
+	private void displayOptionsDialog(boolean isDialogOpenedForPropertiesCreation)
+	{
+		if (!this.optionsDialog.isVisible())
+		{
+			// Init Rss Feed URL field
+			if (this.ccProperties.getRssFeedUrl() != null)
+			{
+				this.optionsDialog.rssFeedURLField.setText(this.ccProperties.getRssFeedUrl());
+			}
+			else
+			{
+				this.optionsDialog.rssFeedURLField.setText("TODO: ADD THE DEFAULT VALUE IN displayOptionsDialog(boolean isDialogOpenedForPropertiesCreation)");
+			}
+			
+			// Init Feed Date Format field
+			if (this.ccProperties.getFeedDateFormat() != null)
+			{
+				this.optionsDialog.dateFormatField.setText(this.ccProperties.getFeedDateFormat());
+			}
+			else
+			{
+				this.optionsDialog.dateFormatField.setText("");
+			}
+			
+			// Init update period (in minutes) field
+			if (this.ccProperties.getUpdatePeriodInSeconds() != null)
+			{
+				this.optionsDialog.updatePeriodField.setValue(this.ccProperties.getUpdatePeriodInSeconds() / 60);
+			}
+			else
+			{
+				this.optionsDialog.updatePeriodField.setValue(5);			
+			}
+
+			// If the dialog is opened for properties edition (not creation), update fields status (ok / error)
+			if (!isDialogOpenedForPropertiesCreation)
+			{
+				this.optionsDialog.updateBaseURLFieldStatus();
+				// TODO: this.optionsDialog.updateDateFormatFieldStatus();
+			}
+
+			// Show the options dialog
+			if (!this.optionsDialog.isDisplayable())
+			{
+				this.optionsDialog.pack();
+			}
+			this.optionsDialog.setVisible(true);
+			this.optionsDialog.toFront();
+
+			if (this.optionsDialog.getLastClickedButton() == BambooPropertiesDialog.BUTTON_OK)
+			{
+				// Update the properties and save them
+				synchronized (this.ccProperties)
+				{
+					this.ccProperties.setRssFeedUrl(this.optionsDialog.rssFeedURLField.getText());
+					this.ccProperties.setFeedDateFormat(this.optionsDialog.dateFormatField.getText());
+					this.ccProperties.setUpdatePeriodInSeconds((Integer) (this.optionsDialog.updatePeriodField.getValue()) * 60);
+				}
+				try
+				{
+					this.ccProperties.saveToFile();
+				}
+				catch (FileNotFoundException e)
+				{
+					throw new RuntimeException(e);
+				}
+				catch (IOException e)
+				{
+					throw new RuntimeException(e);
+				}
+				
+				// make sure that the new properties are taken into account immediately ?
+				this.buildMonitorInstance.reportConfigurationUpdatedToBeTakenIntoAccountImmediately();
+			}			
+		}
+		else
+		{
+			// Give focus to the options windows if it masked by another window
+			this.optionsDialog.setVisible(true);
+			this.optionsDialog.toFront();
+		}
+	}
 }
