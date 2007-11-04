@@ -497,9 +497,8 @@ public class BambooPropertiesDialog extends javax.swing.JDialog {
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         this.lastClickedButton = BUTTON_CANCEL;
-        // "Close" the window
+        // Hide the window
         setVisible(false);
-        dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     private void passwordFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_passwordFieldFocusLost
@@ -574,9 +573,8 @@ public class BambooPropertiesDialog extends javax.swing.JDialog {
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         this.lastClickedButton = BUTTON_OK;
-        // "Close" the window
+        // Hide the window
         setVisible(false);
-        dispose();
     }//GEN-LAST:event_okButtonActionPerformed
     
     /**
