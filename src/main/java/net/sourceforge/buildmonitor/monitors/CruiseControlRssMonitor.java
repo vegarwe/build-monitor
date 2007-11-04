@@ -20,17 +20,18 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-
-import javax.swing.JOptionPane;
 
 import net.sourceforge.buildmonitor.BuildMonitor;
 import net.sourceforge.buildmonitor.BuildReport;
@@ -93,6 +94,20 @@ public class CruiseControlRssMonitor implements Monitor
 		public String getRssFeedUrl()
 		{
 			return this.rssFeedUrl;
+		}
+
+		/**
+		 * Get URL to the cc server instance (deduced from the rss feed url)
+		 * @return the URL to the cc server instance (deduced from the rss feed url)
+		 */
+		public String getMainPageDeducedFromRssFeedUrl()
+		{
+			String returnedValue = null;
+			if (this.rssFeedUrl != null)
+			{
+				returnedValue = this.rssFeedUrl.replace("/rss", "");
+			}
+			return returnedValue;
 		}
 
 		/**
@@ -217,11 +232,6 @@ public class CruiseControlRssMonitor implements Monitor
 	private RssFeedReader rssFeedReader = null;
 
 	/**
-	 * Delay between two update of the build status, in seconds
-	 */
-	private int updatePeriodInSeconds = 0;
-
-	/**
 	 * A Map that contains the last builds status indexed by build project name
 	 */
 	private Map<String, RssFeedItem> lastBuildsStatus;
@@ -272,28 +282,8 @@ public class CruiseControlRssMonitor implements Monitor
 				System.exit(0);
 			}
 		}
-	}
 
-	/**
-	 * Create a new instance.
-	 * 
-	 * @param theApplicationInstance
-	 *            the build monitor instance this thread is running for
-	 * @param theUrlToTheCruiseControlRssFeed
-	 *            URL to the cruise control rss feed to monitor
-	 * @param theUpdatePeriodInSeconds
-	 *            period in seconds between to checks of the rss feed to update
-	 *            the build status
-	 */
-//	public CruiseControlRssMonitor(BuildMonitor theApplicationInstance,
-//			URL theUrlToTheCruiseControlRssFeed,
-//			DateFormat theRssFeedDateFormat, int theUpdatePeriodInSeconds)
-//	{
-//		this.applicationInstance = theApplicationInstance;
-//		this.rssFeedReader = new RssFeedReader(theUrlToTheCruiseControlRssFeed,
-//				theRssFeedDateFormat);
-//		this.updatePeriodInSeconds = theUpdatePeriodInSeconds;
-//	}
+	}
 
 	//////////////////////////////////
 	// Monitor implementation
@@ -309,20 +299,42 @@ public class CruiseControlRssMonitor implements Monitor
 			// update the build status
 			try
 			{
+				Integer updatePeriodInSeconds = null;
+				try
+				{
+					synchronized (this.ccProperties)
+					{
+						this.rssFeedReader = new RssFeedReader(new URL(this.ccProperties.getRssFeedUrl()), new SimpleDateFormat(this.ccProperties.getFeedDateFormat()));
+						updatePeriodInSeconds = this.ccProperties.getUpdatePeriodInSeconds();
+					}
+				}
+				catch (MalformedURLException e)
+				{
+					throw new MonitoringException("The RSS Feed URL is not a valid URL.", e, true, null);
+				}					
 				updateStatus();
 				updateBuildStatusGui();
-			} catch (MonitoringException e)
+				// wait before updating the build status again
+				try
+				{
+					Thread.sleep(updatePeriodInSeconds * 1000);
+				} catch (InterruptedException e)
+				{
+				}
+			}
+			catch (MonitoringException e)
 			{
 				this.buildMonitorInstance.reportMonitoringException(e);
+				// wait one second before trying again
+				try
+				{
+					Thread.sleep(1000);
+				} catch (InterruptedException e2)
+				{
+					// Nothing to do: continue !
+				}
 			}
 
-			// wait before updating the build status again
-			try
-			{
-				Thread.sleep(this.updatePeriodInSeconds * 1000);
-			} catch (InterruptedException e)
-			{
-			}
 		}
 	}
 
@@ -342,7 +354,10 @@ public class CruiseControlRssMonitor implements Monitor
 		URI returnedValue = null;
 		try
 		{
-			returnedValue = new URI("http://cruisecontrol.sourceforge.net");
+			synchronized (this.ccProperties)
+			{
+				returnedValue = new URI(this.ccProperties.getMainPageDeducedFromRssFeedUrl());
+			}
 		}
 		catch (URISyntaxException e)
 		{
@@ -356,8 +371,19 @@ public class CruiseControlRssMonitor implements Monitor
 	 */
 	public URI getBuildURI(String theIdOfTheBuild)
 	{
-		// Not implemented yet: returns the main page
-		return getMainPageURI();
+		URI returnedValue = null;
+		try
+		{
+			synchronized (this.ccProperties)
+			{
+				returnedValue = new URI(this.ccProperties.getMainPageDeducedFromRssFeedUrl() + "/buildresults/" + theIdOfTheBuild);
+			}
+		}
+		catch (URISyntaxException e)
+		{
+			throw new RuntimeException(e);
+		}
+		return returnedValue;
 	}
 
 	/**
@@ -365,7 +391,10 @@ public class CruiseControlRssMonitor implements Monitor
 	 */
 	public String getSystemTrayIconTooltipHeader()
 	{
-		return "Monitoring Cruise Control build";
+		synchronized (this.ccProperties)
+		{
+			return "Monitoring CC server at " + this.ccProperties.getMainPageDeducedFromRssFeedUrl();
+		}
 	}
 	
 	/**
@@ -373,8 +402,7 @@ public class CruiseControlRssMonitor implements Monitor
 	 */
 	public void displayOptionsDialog()
 	{
-		// NOT IMPLEMENTED YET
-		JOptionPane.showMessageDialog(null, "Sorry, no options available yet for the Cruise Control monitor.");
+		displayOptionsDialog(false);
 	}
 
 	/**
@@ -482,7 +510,7 @@ public class CruiseControlRssMonitor implements Monitor
 			}
 			else
 			{
-				this.optionsDialog.rssFeedURLField.setText("TODO: ADD THE DEFAULT VALUE IN displayOptionsDialog(boolean isDialogOpenedForPropertiesCreation)");
+				this.optionsDialog.rssFeedURLField.setText("http://localhost:8080/rss");
 			}
 			
 			// Init Feed Date Format field
@@ -492,7 +520,7 @@ public class CruiseControlRssMonitor implements Monitor
 			}
 			else
 			{
-				this.optionsDialog.dateFormatField.setText("");
+				this.optionsDialog.dateFormatField.setText("EEE, dd MMM yyyy HH:mm:ss Z");
 			}
 			
 			// Init update period (in minutes) field

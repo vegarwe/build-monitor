@@ -189,12 +189,12 @@ public class CruiseControlPropertiesDialog extends javax.swing.JDialog {
         this.dateFormatField.getDocument().addDocumentListener(new DocumentListener() {
             public void insertUpdate(DocumentEvent evt)
             {
-                // TODO: updateDateFormatFieldStatus();
+                // updateUsernameFieldStatus();
                 setButtonsState();
             }
             public void removeUpdate(DocumentEvent evt)
             {
-                // TODO: updateDateFormatFieldStatus();
+                // updateUsernameFieldStatus();
                 setButtonsState();
             }
             public void changedUpdate(DocumentEvent evt)
@@ -209,6 +209,7 @@ public class CruiseControlPropertiesDialog extends javax.swing.JDialog {
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         openBaseURLButton = new javax.swing.JButton();
+        openDateFormatHelpButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setModal(true);
@@ -326,6 +327,13 @@ public class CruiseControlPropertiesDialog extends javax.swing.JDialog {
             }
         });
 
+        openDateFormatHelpButton.setText("Help");
+        openDateFormatHelpButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openDateFormatHelpButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -346,7 +354,10 @@ public class CruiseControlPropertiesDialog extends javax.swing.JDialog {
                                         .addComponent(rssFeedURLField, javax.swing.GroupLayout.DEFAULT_SIZE, 498, Short.MAX_VALUE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(openBaseURLButton))
-                                    .addComponent(dateFormatField, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(dateFormatField, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(openDateFormatHelpButton))))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(10, 10, 10)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -392,6 +403,7 @@ public class CruiseControlPropertiesDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
+                    .addComponent(openDateFormatHelpButton)
                     .addComponent(dateFormatField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(25, 25, 25)
                 .addComponent(jLabel11)
@@ -410,6 +422,21 @@ public class CruiseControlPropertiesDialog extends javax.swing.JDialog {
         );
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void openDateFormatHelpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openDateFormatHelpButtonActionPerformed
+        if (Desktop.isDesktopSupported())
+        {
+                try
+                {
+                    // Open the SimpleDateFormat javadoc
+                    Desktop.getDesktop().browse(new URI("http://java.sun.com/javase/6/docs/api/java/text/SimpleDateFormat.html"));
+                }
+                catch (Exception err)
+                {
+                    // Nothing can be done here...
+                }
+        }
+    }//GEN-LAST:event_openDateFormatHelpButtonActionPerformed
 
     private void openBaseURLButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openBaseURLButtonActionPerformed
         if (Desktop.isDesktopSupported())
@@ -432,7 +459,7 @@ public class CruiseControlPropertiesDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_formWindowOpened
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
-        this.lastClickedButton = BUTTON_CLOSE;
+    	this.lastClickedButton = BUTTON_CLOSE;
     }//GEN-LAST:event_formWindowClosed
 
     private void updatePeriodFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_updatePeriodFieldFocusLost
@@ -452,9 +479,8 @@ public class CruiseControlPropertiesDialog extends javax.swing.JDialog {
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         this.lastClickedButton = BUTTON_CANCEL;
-        // "Close" the window
+        // Hide the window
         setVisible(false);
-        dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     private void dateFormatFieldFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_dateFormatFieldFocusLost
@@ -496,9 +522,8 @@ public class CruiseControlPropertiesDialog extends javax.swing.JDialog {
     
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         this.lastClickedButton = BUTTON_OK;
-        // "Close" the window
+        // Hide the window
         setVisible(false);
-        dispose();
     }//GEN-LAST:event_okButtonActionPerformed
     
     /**
@@ -517,6 +542,7 @@ public class CruiseControlPropertiesDialog extends javax.swing.JDialog {
     public javax.swing.JTextField dateFormatField;
     private javax.swing.JButton okButton;
     private javax.swing.JButton openBaseURLButton;
+    private javax.swing.JButton openDateFormatHelpButton;
     public javax.swing.JTextField rssFeedURLField;
     public javax.swing.JFormattedTextField updatePeriodField;
     // End of variables declaration//GEN-END:variables

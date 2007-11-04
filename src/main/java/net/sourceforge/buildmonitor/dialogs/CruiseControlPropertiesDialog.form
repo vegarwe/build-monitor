@@ -42,7 +42,11 @@
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="openBaseURLButton" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <Component id="dateFormatField" min="-2" pref="116" max="-2" attributes="1"/>
+                                  <Group type="102" attributes="0">
+                                      <Component id="dateFormatField" min="-2" pref="216" max="-2" attributes="1"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="openDateFormatHelpButton" min="-2" max="-2" attributes="0"/>
+                                  </Group>
                               </Group>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
@@ -103,6 +107,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="openDateFormatHelpButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="dateFormatField" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
@@ -283,7 +288,7 @@
         <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="rssFeedURLFieldFocusLost"/>
       </Events>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="this.baseURLField.getDocument().addDocumentListener(new DocumentListener() {&#xa;    public void insertUpdate(DocumentEvent evt)&#xa;    {&#xa;    &#x9;updateBaseURLFieldStatus();&#xa;        setButtonsState();&#xa;    }&#xa;    public void removeUpdate(DocumentEvent evt)&#xa;    {&#xa;    &#x9;updateBaseURLFieldStatus();&#xa;        setButtonsState();&#xa;    }&#xa;    public void changedUpdate(DocumentEvent evt)&#xa;    {&#xa;    }&#xa;});"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="this.rssFeedURLField.getDocument().addDocumentListener(new DocumentListener() {&#xa;    public void insertUpdate(DocumentEvent evt)&#xa;    {&#xa;    &#x9;updateBaseURLFieldStatus();&#xa;        setButtonsState();&#xa;    }&#xa;    public void removeUpdate(DocumentEvent evt)&#xa;    {&#xa;    &#x9;updateBaseURLFieldStatus();&#xa;        setButtonsState();&#xa;    }&#xa;    public void changedUpdate(DocumentEvent evt)&#xa;    {&#xa;    }&#xa;});"/>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
       </AuxValues>
     </Component>
@@ -292,7 +297,7 @@
         <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="dateFormatFieldFocusLost"/>
       </Events>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="this.usernameField.getDocument().addDocumentListener(new DocumentListener() {&#xa;    public void insertUpdate(DocumentEvent evt)&#xa;    {&#xa;    &#x9;updateUsernameFieldStatus();&#xa;        setButtonsState();&#xa;    }&#xa;    public void removeUpdate(DocumentEvent evt)&#xa;    {&#xa;    &#x9;updateUsernameFieldStatus();&#xa;        setButtonsState();&#xa;    }&#xa;    public void changedUpdate(DocumentEvent evt)&#xa;    {&#xa;    }&#xa;});"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodePost" type="java.lang.String" value="this.dateFormatField.getDocument().addDocumentListener(new DocumentListener() {&#xa;    public void insertUpdate(DocumentEvent evt)&#xa;    {&#xa;    &#x9;// updateUsernameFieldStatus();&#xa;        setButtonsState();&#xa;    }&#xa;    public void removeUpdate(DocumentEvent evt)&#xa;    {&#xa;    &#x9;// updateUsernameFieldStatus();&#xa;        setButtonsState();&#xa;    }&#xa;    public void changedUpdate(DocumentEvent evt)&#xa;    {&#xa;    }&#xa;});"/>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
       </AuxValues>
     </Component>
@@ -359,6 +364,14 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="openBaseURLButtonActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="openDateFormatHelpButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Help"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="openDateFormatHelpButtonActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>
