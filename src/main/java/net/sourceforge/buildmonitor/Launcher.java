@@ -15,6 +15,8 @@
  */
 package net.sourceforge.buildmonitor;
 
+import java.security.Security;
+
 import javax.swing.UIManager;
 
 import net.sourceforge.buildmonitor.monitors.BambooMonitor;
@@ -52,6 +54,10 @@ public class Launcher
 		// The monitor to use
 		// TODO: DO NOT USE A DEFAULT VALUE, BUT PROMPT THE USER FOR THE MONITOR TO USE IF IT IS NOT DEFINED ON THE COMMAND LINE
 		String monitor = BAMBOO_MONITOR;
+		
+		System.setProperty("java.protocol.handler.pkgs",
+      "com.sun.net.ssl.internal.www.protocol");
+		Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
 		
 		// Check if a monitor has been specified on the command line
 		if (args.length == 2)

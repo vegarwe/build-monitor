@@ -105,7 +105,7 @@ public class BambooPropertiesDialog extends javax.swing.JDialog {
         try
         {
             URL baseUrl = new URL(this.baseURLField.getText());
-            if (!"http".equals(baseUrl.getProtocol()))
+            if (!"http".equals(baseUrl.getProtocol()) && !"https".equals(baseUrl.getProtocol()) )
             {
             	returnedValue = false;
             }

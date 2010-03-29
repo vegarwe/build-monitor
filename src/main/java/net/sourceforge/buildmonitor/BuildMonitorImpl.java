@@ -420,7 +420,18 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
 			{
 				howLongAgo = "a few seconds ago";
 			}
-			return theBuildReport.getName() + "  (" + howLongAgo + ")";
+			
+			String failedIndicator = "";
+			if(theBuildReport.hasFailed())
+         {
+			   failedIndicator = "- ";
+         }
+         else
+         {
+            failedIndicator = "+ ";
+         }
+			
+			return failedIndicator+ theBuildReport.getName() + "  (" + howLongAgo + ")";
 		}
 	}
 
