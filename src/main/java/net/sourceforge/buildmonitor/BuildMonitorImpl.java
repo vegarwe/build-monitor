@@ -667,8 +667,7 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
 				trayMenu.add(aboutMenuItem);
 				
 				// Exit sub menu
-				Menu exitMenu = new Menu(getMessage(MESSAGEKEY_TRAYICON_MENU_EXIT));
-				MenuItem exitMenuItem = new MenuItem(getMessage(MESSAGEKEY_TRAYICON_MENUITEM_EXIT));
+				MenuItem exitMenuItem = new MenuItem(getMessage(MESSAGEKEY_TRAYICON_MENU_EXIT));
 				ActionListener exitMenuItemActionListener = new ActionListener() {
 					public void actionPerformed(ActionEvent e)
 					{
@@ -676,8 +675,7 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
 					}
 				};
 				exitMenuItem.addActionListener(exitMenuItemActionListener);
-				exitMenu.add(exitMenuItem);
-				trayMenu.add(exitMenu);
+				trayMenu.add(exitMenuItem);
 				
 				this.numberOfItemInEmptyTrayMenu = trayMenu.getItemCount();
 				
