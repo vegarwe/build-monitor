@@ -62,15 +62,10 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
 	//////////////////////////////
 	
 	private static final String MESSAGES_BASE_NAME = "messages/GUIStrings";
-
 	private static final String IMAGE_MONITORING_EXCEPTION = "images/network-offline.png";
-
 	private static final String IMAGE_INITIAL_ICON = "images/utilities-system-monitor.png";
-
 	private static final String IMAGE_ABOUT_ICON = "images/about.png";
-
 	private static final String IMAGE_BUILD_SUCCESS = "images/green_up.png";
-
 	private static final String IMAGE_BUILD_FAILURE = "images/red_down.png";
 
 	// TODO: use relative font if possible
@@ -80,13 +75,9 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
 	private static final Font FAILED_BUILD_MENUITEM_FONT = new Font(Font.SANS_SERIF, Font.BOLD, 14);
 	
 	private static final int TOOLTIP_MAX_LENGTH = 127;
-
 	private static final String OPTIONS_RELATED_MESSAGES_SUFFIX = " Double click here to edit Options.";
-	
 	private static final String TRUNCATED_MESSAGE_SUFFIX = " [...]";
-
 	private static final int SORT_BY_NAME = 1;
-	
 	private static final int SORT_BY_AGE = 2;
 	
 	///////////////////////////////////
@@ -438,35 +429,21 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
 	//////////////////////////////
 	// Instance attributes
 	//////////////////////////////
-	
+
 	private ResourceBundle messages = null;
-	
 	private Monitor monitor = null;
-	
 	private Thread monitorThread = null;
-	
 	private TrayIcon trayIcon = null;
-	
 	private Image initialIcon = null;
-
 	private Image buildSuccessIcon = null;
-	
 	private Image buildFailureIcon = null;
-
 	private Image monitoringExceptionIcon = null;
-
 	private ImageIcon aboutIcon = null;
-	
 	private String currentlyReportedMonitoringException = null;
-	
 	private ActionListener openBuildServerHomePageActionListener = null;
-	
 	private ActionListener openOptionsDialogActionListener = null;
-	
 	private int currentSortOrder = SORT_BY_NAME;
-
 	private CheckboxMenuItem sortByNameMenuItem = null;
-
 	private CheckboxMenuItem sortByAgeMenuItem = null;
 
 	/**
@@ -554,8 +531,6 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
 						}
 					}
 				};
-
-//				this.monitor = new CruiseControlRssMonitor(this, new URL("http://leo:9080/cruisecontrol/rss"), new SimpleDateFormat("yyyy/MM/dd HH:mm:ss"), 30);
 
 				// create the tray icon
 				SystemTray tray = SystemTray.getSystemTray();

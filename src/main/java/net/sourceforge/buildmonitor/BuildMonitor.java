@@ -23,6 +23,7 @@ public interface BuildMonitor
 	///////////////////////////////
 	// Constants
 	///////////////////////////////
+
 	static final String MESSAGEKEY_TRAYICON_INITIAL_TOOLTIP = "trayIcon.tooltip.initialMessage";
 	static final String MESSAGEKEY_TRAYICON_MENU_EXIT = "trayIcon.menu.exit";
 	static final String MESSAGEKEY_TRAYICON_MENU_SORT = "trayIcon.menu.sort";
