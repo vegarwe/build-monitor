@@ -58,7 +58,7 @@ public class RssFeedReaderTest extends TestCase
 
 	public void testGetFeedDocumentOnAWrongURLThrowIOException() throws Exception
 	{
-		RssFeedReader reader = new RssFeedReader(new URL("http://does.not.exists.com/really/doesnotexists/"), new SimpleDateFormat());
+		RssFeedReader reader = new RssFeedReader(new URL("http://does.not.exists/really/doesnotexists/"), new SimpleDateFormat());
 		try
 		{
 			reader.getRssFeedDocument();
@@ -69,7 +69,7 @@ public class RssFeedReaderTest extends TestCase
 			// This is the expected behaviour
 		}
 	}
-	
+
 	public void testReadCruiseControlFeed() throws Exception
 	{
 		RssFeedReader reader = new RssFeedReader(getClass().getClassLoader().getResource("cruise-control-feed.xml"), new SimpleDateFormat("MM/DD/yyyy HH:mm:ss"));
