@@ -23,32 +23,20 @@ public interface BuildMonitor
 	///////////////////////////////
 	// Constants
 	///////////////////////////////
-
 	static final String MESSAGEKEY_TRAYICON_INITIAL_TOOLTIP = "trayIcon.tooltip.initialMessage";
-
 	static final String MESSAGEKEY_TRAYICON_MENU_EXIT = "trayIcon.menu.exit";
-
 	static final String MESSAGEKEY_TRAYICON_MENU_SORT = "trayIcon.menu.sort";
-
 	static final String MESSAGEKEY_TRAYICON_MENUITEM_EXIT = "trayIcon.menuItem.exit";
-
 	static final String MESSAGEKEY_TRAYICON_MENUITEM_SORT_BY_NAME = "trayIcon.menuItem.sortByName";
-
 	static final String MESSAGEKEY_TRAYICON_MENUITEM_SORT_BY_AGE = "trayIcon.menuItem.sortByAge";
-
 	static final String MESSAGEKEY_TRAYICON_MENUITEM_UPDATE_STATUS_NOW = "trayIcon.menuItem.update";
-	
 	static final String MESSAGEKEY_TRAYICON_MENUITEM_BUILD_SERVER_HOME_PAGE_SUFFIX = "trayIcon.menuItem.buildServerHomePageSuffix";
-
 	static final String MESSAGEKEY_TRAYICON_MENUITEM_ABOUT = "trayIcon.menuItem.about";
-
 	static final String MESSAGEKEY_TRAYICON_MENUITEM_OPTIONS = "trayIcon.menuItem.options";
-
 	static final String MESSAGEKEY_ERROR_DIALOG_TITLE = "errorDialog.title";
-
 	static final String MESSAGEKEY_UNEXPECTED_ERROR_MESSAGE = "unexpectedError.message";
-
 	static final String MESSAGEKEY_ERROR_SYSTEMTRAY_NOT_SUPPORTED = "error.systemTray.not.supported";
+	static final String MESSAGEKEY_ABOUT_TITLE = "about.title";
 
 	///////////////////////////////
 	// Methods

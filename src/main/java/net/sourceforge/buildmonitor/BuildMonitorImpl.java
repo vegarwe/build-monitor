@@ -660,7 +660,7 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
 					public void actionPerformed(ActionEvent e)
 					{
 						// FIXME: THE ABOUT MESSAGE SHOULD BE DYNAMICALY GENERATED AT BUILD TIME
-						JOptionPane.showMessageDialog(null, "This is the preview version of build monitor, by sbrunot@gmail.com.\nBuild Revision: unknown\nCurrent monitor is the Bamboo monitor.\n\n", "About...", JOptionPane.INFORMATION_MESSAGE, aboutIcon);
+						JOptionPane.showMessageDialog(null, "This is the preview version of build monitor, by sbrunot@gmail.com.\nBuild Revision: unknown\nCurrent monitor is the Bamboo monitor.\n\n", getMessage(MESSAGEKEY_ABOUT_TITLE), JOptionPane.INFORMATION_MESSAGE, aboutIcon);
 					}
 				};
 				aboutMenuItem.addActionListener(aboutMenuItemActionListener);
