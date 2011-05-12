@@ -306,7 +306,7 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
 		 * Create a new menu item for a build report
 		 * @param theBuildReport the build report to create a menu item for
 		 * @param theBuildFailedFont the Font to use for a menu item related to a failed build
-		 * @param theBuildSucessFont the Font to use for a menu iteù related to a successfull build
+		 * @param theBuildSucessFont the Font to use for a menu item related to a successfull build
 		 * @return
 		 */
 		private MenuItem createNewMenuItemForBuildReport(BuildReport theBuildReport, Font theBuildFailedFont, Font theBuildSucessFont)
