@@ -37,6 +37,7 @@ public interface BuildMonitor
 	static final String MESSAGEKEY_UNEXPECTED_ERROR_MESSAGE = "unexpectedError.message";
 	static final String MESSAGEKEY_ERROR_SYSTEMTRAY_NOT_SUPPORTED = "error.systemTray.not.supported";
 	static final String MESSAGEKEY_ABOUT_TITLE = "about.title";
+	static final String MESSAGEKEY_ABOUT_MESSAGE = "about.message";
 
 	///////////////////////////////
 	// Methods
