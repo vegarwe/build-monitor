@@ -43,6 +43,9 @@ import java.util.Properties;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import javax.xml.xpath.XPathConstants;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
 
 import net.sourceforge.buildmonitor.BuildMonitor;
 import net.sourceforge.buildmonitor.BuildReport;
@@ -252,6 +255,8 @@ public class BambooMonitor implements Monitor
 
 	private static final String REST_GET_LATEST_BUILD_RESULTS_URL = "/api/rest/getLatestBuildResults.action";
 
+	private static final String REST_GET_LATEST_BUILD_RESULTS_PROJECT_URL = "/api/rest/getLatestBuildResultsForProject.action";
+
 	private static final String URL_ENCODING = "UTF-8";
 
 	//////////////////////////////
@@ -324,8 +329,12 @@ public class BambooMonitor implements Monitor
 					lastBuildReport.setName(builds.get(key));
 					lastBuildStatus.add(lastBuildReport);
 				}
+
+				String projectKey = "DRGN";
+				lastBuildStatus = getLatestBuildResultsForProject(bambooServerBaseUrl, authenticationIdentifier, projectKey);
+
 				this.buildMonitorInstance.updateBuildStatus(lastBuildStatus);
-				
+	
 				// wait before updating the build status again
 				try
 				{
@@ -635,6 +644,83 @@ public class BambooMonitor implements Monitor
 			throw new MonitoringException(e, null);
 		}
 		return returnedValue;
+	}
+	
+	/**
+	 * Provides the latest build results for the given buildName.
+	 * @param theAuthenticationIdentifier
+	 * @param theProjectKey
+	 * @return
+	 */
+	private List<BuildReport> getLatestBuildResultsForProject(String theBambooServerBaseURL, String theAuthenticationIdentifier, String theProjectKey) throws MonitoringException
+	{
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss"); // TODO: IS IT A CONSTANT OR A SERVER PARAMETER ?
+		try
+		{
+			List returnList = new ArrayList<BuildReport>();
+			URL methodURL = new URL(theBambooServerBaseURL + 
+					REST_GET_LATEST_BUILD_RESULTS_PROJECT_URL + 
+					"?auth=" + URLEncoder.encode(theAuthenticationIdentifier, URL_ENCODING) +
+					"&projectKey=" + URLEncoder.encode(theProjectKey, URL_ENCODING));
+			InputSource serverResponseIS = new InputSource(new StringReader(callBambooApi(methodURL)));
+
+			NodeList nodes = (NodeList) XPathFactory.newInstance().newXPath().evaluate("/response/build", serverResponseIS, XPathConstants.NODESET);
+			for (int i = 0; i < nodes.getLength(); i++)
+			{
+				BuildReport report = new BuildReport();
+				NodeList childNodes = nodes.item(i).getChildNodes();
+
+				String projectName = getNamedChildNodeValue(childNodes, "projectName");
+				String buildState = getNamedChildNodeValue(childNodes, "buildState");
+				String buildName = getNamedChildNodeValue(childNodes, "buildName");
+				String buildTime = getNamedChildNodeValue(childNodes, "buildTime");
+
+				report.setId(getNamedChildNodeValue(childNodes, "buildKey"));
+				report.setName(projectName + " - " + buildName);
+
+				if ("Successful".equals(buildState))
+				{
+					report.setStatus(Status.OK);
+				}
+				else if ("Failed".equals(buildState))
+				{
+					report.setStatus(Status.FAILED);
+				}
+				else
+				{
+					throw new MonitoringException("Unknown build state '" + buildState + "' returned for project " + theProjectKey, null);
+				}
+
+				try
+				{
+					report.setDate(dateFormat.parse(buildTime));
+				}
+				catch (ParseException e)
+				{
+					// TODO: display a message to the end user to asl for defining another value for the date parser ????
+				}
+
+				returnList.add(report);
+			}
+
+			return returnList;
+		}
+		catch (Throwable t)
+		{
+			throw new MonitoringException(t, null);
+		}
+	}
+
+	private String getNamedChildNodeValue(NodeList nodes, String nodeName) throws MonitoringException
+	{
+		for (int i = 0; i < nodes.getLength(); i++)
+		{
+			if (nodeName.equals(nodes.item(i).getNodeName()))
+			{
+				return nodes.item(i).getFirstChild().getNodeValue();
+			}
+		}
+		throw new MonitoringException("Unable to find node with name" + nodeName, null);
 	}
 	
 	/**
