@@ -662,9 +662,14 @@ public class BambooMonitor implements Monitor
 			{
 				returnedValue.setStatus(Status.FAILED);
 			}
+			else if ("".equals(buildState))
+			{
+				//returnedValue.setStatus(Status.EMPTY);
+				returnedValue.setStatus(Status.FAILED);
+			}
 			else
 			{
-				throw new MonitoringException("Unknown build state " + buildState + " returned for build " + theBuildKey, null);
+				throw new MonitoringException("Unknown build state '" + buildState + "' returned for build " + theBuildKey, null);
 			}
 			serverResponseIS = new InputSource(new StringReader(serverResponse));
 			String buildTime = XPathFactory.newInstance().newXPath().evaluate("/response/buildTime", serverResponseIS);

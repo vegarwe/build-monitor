@@ -125,7 +125,7 @@ public class BuildReport
 	 * @author sbrunot
 	 *
 	 */
-	public enum Status {OK, FAILED};
+	public enum Status {OK, FAILED, EMPTY};
 
 	/////////////////////////////
 	// Instance attributes
