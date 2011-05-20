@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
 
@@ -84,6 +85,8 @@ public class BambooMonitor implements Monitor
 
 		private static final String BAMBOO_SERVER_BASE_URL_PROPERTY_KEY = "bamboo.server.base.url";
 
+		private static final String BAMBOO_PROJECT_PROPERTY_KEY = "bamboo.server.project_keys";
+
 		private static final String USER_PROPERTIES_FILE = "bamboo-monitor.properties";
 
 		//////////////////////////////
@@ -97,6 +100,8 @@ public class BambooMonitor implements Monitor
 		private String password = null;
 		
 		private Integer updatePeriodInSeconds = null;
+
+		private List<String> projectKeys = null;
 		
 		//////////////////////////////
 		// Getters and Setters
@@ -177,6 +182,30 @@ public class BambooMonitor implements Monitor
 		{
 			this.password = thePassword;
 		}
+		
+		/**
+		 * Get the bamboo project keys
+		 */
+		public List<String> getProjectKeys()
+		{
+			return this.projectKeys;
+		}
+
+		/**
+		 * Set the bamboo project keys
+		 * @param thePassword the bamboo user password
+		 */
+		public void setProjectKeys(String theProjectKeys)
+		{
+			if (theProjectKeys == null)
+			{
+				this.projectKeys = null;
+			}
+			else
+			{
+				this.projectKeys = new ArrayList(Arrays.asList(theProjectKeys.split(",")));
+			}
+		}
 
 		//////////////////////////////
 		// File persistence
@@ -218,6 +247,7 @@ public class BambooMonitor implements Monitor
 				}
 				setUsername(bambooMonitorProperties.getProperty(BAMBOO_USERNAME_PROPERTY_KEY));
 				setPassword(bambooMonitorProperties.getProperty(BAMBOO_PASSWORD_PROPERTY_KEY));
+				setProjectKeys(bambooMonitorProperties.getProperty(BAMBOO_PROJECT_PROPERTY_KEY));
 			}
 		}
 		
@@ -321,17 +351,26 @@ public class BambooMonitor implements Monitor
 					bambooServerBaseUrl = this.bambooProperties.getServerBaseUrl();
 					updatePeriodInSeconds = this.bambooProperties.getUpdatePeriodInSeconds();
 				}
-				Map<String, String> builds = listBuildNames(bambooServerBaseUrl, authenticationIdentifier);
-				List<BuildReport> lastBuildStatus = new ArrayList<BuildReport>();
-				for (String key : builds.keySet())
-				{
-					BuildReport lastBuildReport = getLatestBuildResults(bambooServerBaseUrl, authenticationIdentifier, key);
-					lastBuildReport.setName(builds.get(key));
-					lastBuildStatus.add(lastBuildReport);
-				}
 
-				String projectKey = "DRGN";
-				lastBuildStatus = getLatestBuildResultsForProject(bambooServerBaseUrl, authenticationIdentifier, projectKey);
+				List<BuildReport> lastBuildStatus = new ArrayList<BuildReport>();
+				if (this.bambooProperties.getProjectKeys() == null)
+				{
+					Map<String, String> builds = listBuildNames(bambooServerBaseUrl, authenticationIdentifier);
+					for (String key : builds.keySet())
+					{
+						BuildReport lastBuildReport = getLatestBuildResults(bambooServerBaseUrl, authenticationIdentifier, key);
+						lastBuildReport.setName(builds.get(key));
+						lastBuildStatus.add(lastBuildReport);
+					}
+				}
+				else
+				{
+					for (String projectKey : this.bambooProperties.getProjectKeys())
+					{
+						lastBuildStatus.addAll(
+								getLatestBuildResultsForProject(bambooServerBaseUrl, authenticationIdentifier, projectKey));
+					}
+				}
 
 				this.buildMonitorInstance.updateBuildStatus(lastBuildStatus);
 	
