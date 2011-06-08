@@ -204,16 +204,13 @@ public class BambooProperties
 				}
 			}
 			setUsername(bambooMonitorProperties.getProperty(BAMBOO_USERNAME_PROPERTY_KEY));
-			String password = bambooMonitorProperties.getProperty(BAMBOO_PASSWORD_PROPERTY_KEY);
-			if (password.startsWith("{base64}"))
+			String proppassword = bambooMonitorProperties.getProperty(BAMBOO_PASSWORD_PROPERTY_KEY);
+			if (proppassword.startsWith("{base64}"))
 			{
-				password = new String(Base64.encodeBase64(password.getBytes()));
-				System.out.println("b: " + password);
+				proppassword = proppassword.substring(8);
+				proppassword = new String(Base64.decodeBase64(proppassword.getBytes()));
 			}
-			else
-			{
-				setPassword(password);
-			}
+			setPassword(proppassword);
 		}
 	}
 	
@@ -227,9 +224,10 @@ public class BambooProperties
 		Properties bambooMonitorProperties = new Properties();
 		synchronized (this)
 		{
+			String proppassword = "{base64}" + new String(Base64.encodeBase64(this.password.getBytes()));
 			bambooMonitorProperties.setProperty(BAMBOO_SERVER_BASE_URL_PROPERTY_KEY, this.serverBaseUrl);
 			bambooMonitorProperties.setProperty(BAMBOO_USERNAME_PROPERTY_KEY, this.username);
-			bambooMonitorProperties.setProperty(BAMBOO_PASSWORD_PROPERTY_KEY, this.password);
+			bambooMonitorProperties.setProperty(BAMBOO_PASSWORD_PROPERTY_KEY, proppassword);
 			bambooMonitorProperties.setProperty(UPDATE_PERIOD_IN_SECONDS_PROPERTY_KEY, "" + this.getUpdatePeriodInSeconds());
 		}
 		
