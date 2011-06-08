@@ -175,11 +175,11 @@ public class BambooProperties
 	 */
 	public List<String> getProjectKeys()
 	{
-		if (this.projectKeys == null)
+		if (this.projectKeys == null || this.projectKeys.equals(""))
 		{
 			return null;
 		}
-		return new ArrayList<String>(Arrays.asList(theProjectKeys.split(",")));
+		return new ArrayList<String>(Arrays.asList(this.projectKeys.split(",")));
 	}
 
 	/**
@@ -252,10 +252,15 @@ public class BambooProperties
 		synchronized (this)
 		{
 			String proppassword = "{base64}" + new String(Base64.encodeBase64(this.password.getBytes()));
+			String propProjectKeys = this.projectKeys;
+			if (propProjectKeys == null)
+			{
+				propProjectKeys = "";
+			}
 			bambooMonitorProperties.setProperty(BAMBOO_SERVER_BASE_URL_PROPERTY_KEY, this.serverBaseUrl);
 			bambooMonitorProperties.setProperty(BAMBOO_USERNAME_PROPERTY_KEY, this.username);
 			bambooMonitorProperties.setProperty(BAMBOO_PASSWORD_PROPERTY_KEY, proppassword);
-			bambooMonitorProperties.setProperty(BAMBOO_PROJECT_PROPERTY_KEY, this.projectKeys);
+			bambooMonitorProperties.setProperty(BAMBOO_PROJECT_PROPERTY_KEY, propProjectKeys);
 			bambooMonitorProperties.setProperty(UPDATE_PERIOD_IN_SECONDS_PROPERTY_KEY, "" + this.getUpdatePeriodInSeconds());
 		}
 		
