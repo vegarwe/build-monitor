@@ -30,14 +30,34 @@ public class BambooPropertiesTest extends TestCase
 	
 	public void testloadFromFileBase64Password()
 	{
-		//BuildMonitorImpl applicationInstance = new BuildMonitorImpl(BambooMonitor.class);
-		//System.out.println(applicationInstance.monitor);
-
-		System.setProperty("user.home", "fisken");
 		BambooProperties bambooProperties = new BambooProperties();
 		try {
+			System.setProperty("user.home", "/home/vegarwe/devel/build-monitor/src/test/resources/base64pass");
 			bambooProperties.loadFromFile();
 		} catch (IOException e) {}
-		assertEquals(bambooProperties.getPassword(), "frosken");
+		assertEquals(bambooProperties.getPassword(), "testpassord");
+	}
+	
+	public void testloadFromFilePlaintextPassword()
+	{
+		BambooProperties bambooProperties = new BambooProperties();
+		try {
+			System.setProperty("user.home", "/home/vegarwe/devel/build-monitor/src/test/resources/plainpass");
+			bambooProperties.loadFromFile();
+		} catch (IOException e) {}
+		assertEquals(bambooProperties.getPassword(), "testpassord");
+	}
+	
+	public void testSaveToFilePlaintextPassword()
+	{
+		BambooProperties bambooProperties = new BambooProperties();
+		try {
+			System.setProperty("user.home", "/home/vegarwe/devel/build-monitor/src/test/resources/plainpass");
+			bambooProperties.loadFromFile();
+			System.setProperty("user.home", "/home/vegarwe/devel/build-monitor/src/test/resources/tmp");
+			bambooProperties.saveToFile();
+			bambooProperties.loadFromFile();
+		} catch (IOException e) {}
+		assertEquals(bambooProperties.getPassword(), "testpassord");
 	}
 }
