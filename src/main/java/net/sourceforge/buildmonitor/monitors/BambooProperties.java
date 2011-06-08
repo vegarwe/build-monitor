@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
 
@@ -87,7 +88,7 @@ public class BambooProperties
 	
 	private Integer updatePeriodInSeconds = null;
 
-	private List<String> projectKeys = null;
+	private String projectKeys = null;
 	
 	//////////////////////////////
 	// Getters and Setters
@@ -174,7 +175,11 @@ public class BambooProperties
 	 */
 	public List<String> getProjectKeys()
 	{
-		return this.projectKeys;
+		if (this.projectKeys == null)
+		{
+			return null;
+		}
+		return new ArrayList<String>(Arrays.asList(theProjectKeys.split(",")));
 	}
 
 	/**
@@ -183,14 +188,7 @@ public class BambooProperties
 	 */
 	public void setProjectKeys(String theProjectKeys)
 	{
-		if (theProjectKeys == null)
-		{
-			this.projectKeys = null;
-		}
-		else
-		{
-			this.projectKeys = new ArrayList(Arrays.asList(theProjectKeys.split(",")));
-		}
+		this.projectKeys = theProjectKeys;
 	}
 
 	//////////////////////////////
@@ -257,6 +255,7 @@ public class BambooProperties
 			bambooMonitorProperties.setProperty(BAMBOO_SERVER_BASE_URL_PROPERTY_KEY, this.serverBaseUrl);
 			bambooMonitorProperties.setProperty(BAMBOO_USERNAME_PROPERTY_KEY, this.username);
 			bambooMonitorProperties.setProperty(BAMBOO_PASSWORD_PROPERTY_KEY, proppassword);
+			bambooMonitorProperties.setProperty(BAMBOO_PROJECT_PROPERTY_KEY, this.projectKeys);
 			bambooMonitorProperties.setProperty(UPDATE_PERIOD_IN_SECONDS_PROPERTY_KEY, "" + this.getUpdatePeriodInSeconds());
 		}
 		
