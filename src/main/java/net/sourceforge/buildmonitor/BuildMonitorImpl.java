@@ -46,6 +46,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import net.sourceforge.buildmonitor.monitors.Monitor;
+import net.sourceforge.buildmonitor.monitors.MonitorFactory;
 
 import org.joda.time.LocalDateTime;
 import org.joda.time.Period;
@@ -471,7 +472,7 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
 	 * Create a new instance of BuildMonitorImpl
 	 * @param theMonitorImplementationClass the implementation of Monitor to use
 	 */
-	public BuildMonitorImpl(Class<? extends Monitor> theMonitorImplementationClass)
+	public BuildMonitorImpl(MonitorFactory monitorFactory)
 	{
 		super();
 
@@ -480,8 +481,7 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
 
 		try
 		{
-			Constructor<?> monitorConstructor = theMonitorImplementationClass.getConstructor(new Class[] {BuildMonitor.class});
-			this.monitor = (Monitor) monitorConstructor.newInstance(new Object[] {this});
+			this.monitor = monitorFactory.getMonitor(this);
 		}
 		catch(Exception e)
 		{

@@ -22,6 +22,7 @@ import javax.swing.UIManager;
 import net.sourceforge.buildmonitor.monitors.BambooMonitor;
 import net.sourceforge.buildmonitor.monitors.CruiseControlRssMonitor;
 import net.sourceforge.buildmonitor.monitors.Monitor;
+import net.sourceforge.buildmonitor.monitors.MonitorFactory;
 
 /**
  * The class to use to launch the BuildMonitorImpl application.
@@ -55,8 +56,7 @@ public class Launcher
 		// TODO: DO NOT USE A DEFAULT VALUE, BUT PROMPT THE USER FOR THE MONITOR TO USE IF IT IS NOT DEFINED ON THE COMMAND LINE
 		String monitor = BAMBOO_MONITOR;
 		
-		System.setProperty("java.protocol.handler.pkgs",
-      "com.sun.net.ssl.internal.www.protocol");
+		System.setProperty("java.protocol.handler.pkgs", "com.sun.net.ssl.internal.www.protocol");
 		Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
 		
 		// Check if a monitor has been specified on the command line
@@ -81,39 +81,7 @@ public class Launcher
 		}
 
 		// Create a new instance of BuildMonitor
-		BuildMonitorImpl applicationInstance = new BuildMonitorImpl(getMonitorImplementationClass(monitor));
+		BuildMonitorImpl applicationInstance = new BuildMonitorImpl(new MonitorFactory(monitor));
 		javax.swing.SwingUtilities.invokeLater(applicationInstance);
-	}
-
-	////////////////////////////////////////
-	// Private methods
-	////////////////////////////////////////
-
-	/**
-	 * Get the Monitor implementation class for a monitor name defined on the launch command line with
-	 * the {@link #MONITOR_PARAMETER} option.
-	 * @param theMonitorName the name of the monitor defined on the launch command line with the {@link #MONITOR_PARAMETER}
-	 * option. Possible values are:
-	 * <ul>
-	 * 	<li>{@link #BAMBOO_MONITOR}</li>
-	 *  <li>{@link #CRUISE_CONTROL_MONITOR}</li>
-	 * </ul>
-	 */
-	private static Class<? extends Monitor> getMonitorImplementationClass(String theMonitorName)
-	{
-		Class<? extends Monitor> returnedValue = null;
-		if (BAMBOO_MONITOR.equals(theMonitorName))
-		{
-			returnedValue = BambooMonitor.class;
-		}
-		else if (CRUISE_CONTROL_MONITOR.equals(theMonitorName))
-		{
-			returnedValue = CruiseControlRssMonitor.class;
-		}
-		else
-		{
-			throw new RuntimeException("\n\n" + theMonitorName + " is not a supported monitor.\nSupported monitors are:\n\tbamboo (for monitoring Atlassian Bamboo continuous build server)\n\tcc (for monitoring Cruise Control continuous build server)\n");
-		}
-		return returnedValue;
 	}
 }
