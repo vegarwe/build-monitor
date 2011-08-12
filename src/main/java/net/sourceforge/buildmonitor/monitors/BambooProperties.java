@@ -74,6 +74,15 @@ public class BambooProperties
 	private Integer updatePeriodInSeconds = null;
 	private Boolean favouriteProjectsOnly = null;
 	private String projectKeys = null;
+
+	public BambooProperties()
+	{
+		this.serverBaseUrl = "http://localhost:8085";
+		this.username = "";
+		this.password = "";
+		this.updatePeriodInSeconds = 300;
+		this.favouriteProjectsOnly = new Boolean(false);
+	}
 	
 	/**
 	 * Load the properties from the {@link #USER_PROPERTIES_FILE} file in the
@@ -140,6 +149,62 @@ public class BambooProperties
 		buildMonitorPropertiesOutputStream.close();
 	}
 
+	public void displayOptionsDialog(boolean isDialogOpenedForPropertiesCreation, BambooPropertiesDialog optionsDialog)
+	{
+		if (optionsDialog.isVisible())
+		{
+			optionsDialog.setVisible(true);
+			optionsDialog.toFront();
+			return;
+		}
+
+		optionsDialog.baseURLField.setText(getServerBaseUrl());
+		optionsDialog.usernameField.setText(getUsername());
+		optionsDialog.passwordField.setText(getPassword());
+		optionsDialog.updatePeriodField.setValue(getUpdatePeriodInSeconds() / 60);
+		optionsDialog.favouriteProjectsOnly.setSelected(getFavouriteProjectsOnly());
+
+		// If the dialog is opened for properties edition (not creation), update fields status (ok / error)
+		if (!isDialogOpenedForPropertiesCreation)
+		{
+			optionsDialog.updateBaseURLFieldStatus();
+			optionsDialog.updateUsernameFieldStatus();
+			optionsDialog.updatePasswordFieldStatus();
+		}
+
+		// Show the options dialog
+		if (!optionsDialog.isDisplayable())
+		{
+			optionsDialog.pack();
+		}
+		optionsDialog.setVisible(true);
+		optionsDialog.toFront();
+
+		if (optionsDialog.getLastClickedButton() == BambooPropertiesDialog.BUTTON_OK)
+		{
+			// Update the properties and save them
+			synchronized (this)
+			{
+				setServerBaseUrl(optionsDialog.baseURLField.getText());
+				setUsername(optionsDialog.usernameField.getText());
+				setPassword(new String(optionsDialog.passwordField.getPassword()));
+				setUpdatePeriodInSeconds((Integer) (optionsDialog.updatePeriodField.getValue()) * 60);
+				setFavouriteProjectsOnly(optionsDialog.favouriteProjectsOnly.isSelected());
+			}
+			try
+			{
+				saveToFile();
+			}
+			catch (FileNotFoundException e)
+			{
+				throw new RuntimeException(e);
+			}
+			catch (IOException e)
+			{
+				throw new RuntimeException(e);
+			}
+		}			
+	}
 
 	/**
 	 * Get URL to the bamboo server

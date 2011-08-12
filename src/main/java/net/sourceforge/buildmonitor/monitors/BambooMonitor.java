@@ -310,98 +310,16 @@ public class BambooMonitor implements Monitor
 
 	private void displayOptionsDialog(boolean isDialogOpenedForPropertiesCreation)
 	{
-		if (!this.optionsDialog.isVisible())
+		bambooProperties.displayOptionsDialog(isDialogOpenedForPropertiesCreation, optionsDialog);
+
+		if (optionsDialog.getLastClickedButton() == BambooPropertiesDialog.BUTTON_OK)
 		{
-			// Init server base URL field
-			if (this.bambooProperties.getServerBaseUrl() != null)
-			{
-				this.optionsDialog.baseURLField.setText(this.bambooProperties.getServerBaseUrl());
-			}
-			else
-			{
-				this.optionsDialog.baseURLField.setText("http://localhost:8085");
-			}
 			
-			// Init username field
-			if (this.bambooProperties.getUsername() != null)
-			{
-				this.optionsDialog.usernameField.setText(this.bambooProperties.getUsername());
-			}
-			else
-			{
-				this.optionsDialog.usernameField.setText("");
-			}
-			
-			// Init password field
-			if (this.bambooProperties.getPassword() != null)
-			{
-				this.optionsDialog.passwordField.setText(this.bambooProperties.getPassword());
-			}
-			else
-			{
-				this.optionsDialog.passwordField.setText("");
-			}
-			
-			// Init update period (in minutes) field
-			if (this.bambooProperties.getUpdatePeriodInSeconds() != null)
-			{
-				this.optionsDialog.updatePeriodField.setValue(this.bambooProperties.getUpdatePeriodInSeconds() / 60);
-			}
-			else
-			{
-				this.optionsDialog.updatePeriodField.setValue(5);			
-			}
-
-			// If the dialog is opened for properties edition (not creation), update fields status (ok / error)
-			if (!isDialogOpenedForPropertiesCreation)
-			{
-				this.optionsDialog.updateBaseURLFieldStatus();
-				this.optionsDialog.updateUsernameFieldStatus();
-				this.optionsDialog.updatePasswordFieldStatus();
-			}
-
-			// Show the options dialog
-			if (!this.optionsDialog.isDisplayable())
-			{
-				this.optionsDialog.pack();
-			}
-			this.optionsDialog.setVisible(true);
-			this.optionsDialog.toFront();
-
-			if (this.optionsDialog.getLastClickedButton() == BambooPropertiesDialog.BUTTON_OK)
-			{
-				// Update the properties and save them
-				synchronized (this.bambooProperties)
-				{
-					this.bambooProperties.setServerBaseUrl(this.optionsDialog.baseURLField.getText());
-					this.bambooProperties.setUsername(this.optionsDialog.usernameField.getText());
-					this.bambooProperties.setPassword(new String(this.optionsDialog.passwordField.getPassword()));
-					this.bambooProperties.setUpdatePeriodInSeconds((Integer) (this.optionsDialog.updatePeriodField.getValue()) * 60);
-				}
-				try
-				{
-					this.bambooProperties.saveToFile();
-				}
-				catch (FileNotFoundException e)
-				{
-					throw new RuntimeException(e);
-				}
-				catch (IOException e)
-				{
-					throw new RuntimeException(e);
-				}
-				
-				// make sure that the new properties are taken into account immediately ?
-				this.buildMonitorInstance.reportConfigurationUpdatedToBeTakenIntoAccountImmediately();
-			}			
-		}
-		else
-		{
-			// Give focus to the options windows if it masked by another window
-			this.optionsDialog.setVisible(true);
-			this.optionsDialog.toFront();
+			// make sure that the new properties are taken into account immediately ?
+			buildMonitorInstance.reportConfigurationUpdatedToBeTakenIntoAccountImmediately();
 		}
 	}
+
 	
 	/**
 	 * Login and create an authentication token.
