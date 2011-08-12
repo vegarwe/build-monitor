@@ -94,9 +94,9 @@ public class BambooMonitor implements Monitor
 	// Constructors
 	//////////////////////////////
 
-	public BambooMonitor(BuildMonitor theBuildMonitorInstance) throws FileNotFoundException, IOException
+	public BambooMonitor(BuildMonitor buildMonitorInstance) throws FileNotFoundException, IOException
 	{
-		this.buildMonitorInstance = theBuildMonitorInstance;
+		this.buildMonitorInstance = buildMonitorInstance;
 
 		// build the options dialog
 		this.optionsDialog = new BambooPropertiesDialog(null, true);
