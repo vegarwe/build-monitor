@@ -60,140 +60,20 @@ import org.xml.sax.InputSource;
  */
 public class BambooProperties
 {
-	//////////////////////////////
-	// Constants
-	//////////////////////////////
-
 	private static final String BAMBOO_PASSWORD_PROPERTY_KEY = "bamboo.password";
-
 	private static final String BAMBOO_USERNAME_PROPERTY_KEY = "bamboo.username";
-
 	private static final String UPDATE_PERIOD_IN_SECONDS_PROPERTY_KEY = "update.period.in.seconds";
-
 	private static final String BAMBOO_SERVER_BASE_URL_PROPERTY_KEY = "bamboo.server.base.url";
-
 	private static final String BAMBOO_PROJECT_PROPERTY_KEY = "bamboo.server.project_keys";
-
+	private static final String BAMBOO_FAVOURITE_PROJECTS_ONLY = "bamboo.favourite.projects.only";
 	private static final String USER_PROPERTIES_FILE = "bamboo-monitor.properties";
 
-	//////////////////////////////
-	// Instance attributes
-	//////////////////////////////
-
 	private String serverBaseUrl = null;
-	
 	private String username = null;
-	
 	private String password = null;
-	
 	private Integer updatePeriodInSeconds = null;
-
+	private Boolean favouriteProjectsOnly = null;
 	private String projectKeys = null;
-	
-	//////////////////////////////
-	// Getters and Setters
-	//////////////////////////////
-
-	/**
-	 * Get URL to the bamboo server
-	 * @return the URL to the bamboo server
-	 */
-	public String getServerBaseUrl()
-	{
-		return this.serverBaseUrl;
-	}
-
-	/**
-	 * Set URL to the bamboo server
-	 * @param theServerBaseUrl the URL to the bamboo server
-	 */
-	public void setServerBaseUrl(String theServerBaseUrl)
-	{
-		this.serverBaseUrl = theServerBaseUrl;
-		// trim the remaining / in server base url if it exists
-		if (this.serverBaseUrl != null && this.serverBaseUrl.endsWith("/"))
-		{
-			this.serverBaseUrl = this.serverBaseUrl.substring(0, this.serverBaseUrl.length() - 1);
-		}
-	}
-
-	/**
-	 * Get the period (in seconds) of build status update
-	 * @return the period (in seconds) of build status update
-	 */
-	public Integer getUpdatePeriodInSeconds()
-	{
-		return this.updatePeriodInSeconds;
-	}
-
-	/**
-	 * Set the period (in seconds) of build status update
-	 * @param theUpdatePeriodInSeconds the period (in seconds) of build status update
-	 */
-	public void setUpdatePeriodInSeconds(Integer theUpdatePeriodInSeconds)
-	{
-		this.updatePeriodInSeconds = theUpdatePeriodInSeconds;
-	}
-
-	/**
-	 * Get the bamboo user name
-	 * @return the bamboo user name
-	 */
-	public String getUsername()
-	{
-		return this.username;
-	}
-
-	/**
-	 * Set the bamboo user name
-	 * @param theUsername the bamboo user name
-	 */
-	public void setUsername(String theUsername)
-	{
-		this.username = theUsername;
-	}
-	
-	/**
-	 * Get the bamboo user password
-	 */
-	public String getPassword()
-	{
-		return this.password;
-	}
-
-	/**
-	 * Set the bamboo user password
-	 * @param thePassword the bamboo user password
-	 */
-	public void setPassword(String thePassword)
-	{
-		this.password = thePassword;
-	}
-	
-	/**
-	 * Get the bamboo project keys
-	 */
-	public List<String> getProjectKeys()
-	{
-		if (this.projectKeys == null || this.projectKeys.equals(""))
-		{
-			return null;
-		}
-		return new ArrayList<String>(Arrays.asList(this.projectKeys.split(",")));
-	}
-
-	/**
-	 * Set the bamboo project keys
-	 * @param thePassword the bamboo user password
-	 */
-	public void setProjectKeys(String theProjectKeys)
-	{
-		this.projectKeys = theProjectKeys;
-	}
-
-	//////////////////////////////
-	// File persistence
-	//////////////////////////////
 	
 	/**
 	 * Load the properties from the {@link #USER_PROPERTIES_FILE} file in the
@@ -215,22 +95,10 @@ public class BambooProperties
 		synchronized (this)
 		{
 			setServerBaseUrl(bambooMonitorProperties.getProperty(BAMBOO_SERVER_BASE_URL_PROPERTY_KEY));
-
-			String updatePeriodInSecondsAsString = bambooMonitorProperties.getProperty(UPDATE_PERIOD_IN_SECONDS_PROPERTY_KEY);
-			if (updatePeriodInSecondsAsString != null)
-			{
-				try
-				{
-					setUpdatePeriodInSeconds(Integer.parseInt(updatePeriodInSecondsAsString));
-				}
-				catch(NumberFormatException e)
-				{
-					// Use a default value
-					setUpdatePeriodInSeconds(300);
-				}
-			}
+			setUpdatePeriodInSeconds(bambooMonitorProperties.getProperty(UPDATE_PERIOD_IN_SECONDS_PROPERTY_KEY));
 			setUsername(bambooMonitorProperties.getProperty(BAMBOO_USERNAME_PROPERTY_KEY));
 			setProjectKeys(bambooMonitorProperties.getProperty(BAMBOO_PROJECT_PROPERTY_KEY));
+			setFavouriteProjectsOnly(bambooMonitorProperties.getProperty(BAMBOO_FAVOURITE_PROJECTS_ONLY));
 			String proppassword = bambooMonitorProperties.getProperty(BAMBOO_PASSWORD_PROPERTY_KEY);
 			if (proppassword.startsWith("{base64}"))
 			{
@@ -251,17 +119,18 @@ public class BambooProperties
 		Properties bambooMonitorProperties = new Properties();
 		synchronized (this)
 		{
-			String proppassword = "{base64}" + new String(Base64.encodeBase64(this.password.getBytes()));
+			String proppassword = "{base64}" + new String(Base64.encodeBase64(getPassword().getBytes()));
 			String propProjectKeys = this.projectKeys;
 			if (propProjectKeys == null)
 			{
 				propProjectKeys = "";
 			}
-			bambooMonitorProperties.setProperty(BAMBOO_SERVER_BASE_URL_PROPERTY_KEY, this.serverBaseUrl);
-			bambooMonitorProperties.setProperty(BAMBOO_USERNAME_PROPERTY_KEY, this.username);
+			bambooMonitorProperties.setProperty(BAMBOO_SERVER_BASE_URL_PROPERTY_KEY, getServerBaseUrl());
+			bambooMonitorProperties.setProperty(BAMBOO_USERNAME_PROPERTY_KEY, getUsername());
 			bambooMonitorProperties.setProperty(BAMBOO_PASSWORD_PROPERTY_KEY, proppassword);
+			bambooMonitorProperties.setProperty(BAMBOO_FAVOURITE_PROJECTS_ONLY, "" + getFavouriteProjectsOnly());
 			bambooMonitorProperties.setProperty(BAMBOO_PROJECT_PROPERTY_KEY, propProjectKeys);
-			bambooMonitorProperties.setProperty(UPDATE_PERIOD_IN_SECONDS_PROPERTY_KEY, "" + this.getUpdatePeriodInSeconds());
+			bambooMonitorProperties.setProperty(UPDATE_PERIOD_IN_SECONDS_PROPERTY_KEY, "" + getUpdatePeriodInSeconds());
 		}
 		
 		// Store the Properties object in the file
@@ -270,5 +139,158 @@ public class BambooProperties
 		bambooMonitorProperties.store(buildMonitorPropertiesOutputStream, "File last updated on " + new Date());
 		buildMonitorPropertiesOutputStream.close();
 	}
-}
 
+
+	/**
+	 * Get URL to the bamboo server
+	 * @return the URL to the bamboo server
+	 */
+	public String getServerBaseUrl()
+	{
+		return this.serverBaseUrl;
+	}
+
+	/**
+	 * Set URL to the bamboo server
+	 * @param serverBaseUrl the URL to the bamboo server
+	 */
+	public void setServerBaseUrl(String serverBaseUrl)
+	{
+		this.serverBaseUrl = serverBaseUrl;
+		// trim the remaining / in server base url if it exists
+		if (this.serverBaseUrl != null && this.serverBaseUrl.endsWith("/"))
+		{
+			this.serverBaseUrl = this.serverBaseUrl.substring(0, this.serverBaseUrl.length() - 1);
+		}
+	}
+
+	/**
+	 * Get the period (in seconds) of build status update
+	 * @return the period (in seconds) of build status update
+	 */
+	public Integer getUpdatePeriodInSeconds()
+	{
+		return this.updatePeriodInSeconds;
+	}
+
+	/**
+	 * Set the period (in seconds) of build status update
+	 * @param updatePeriodInSeconds the period (in seconds) of build status update
+	 */
+	public void setUpdatePeriodInSeconds(Integer updatePeriodInSeconds)
+	{
+		this.updatePeriodInSeconds = updatePeriodInSeconds;
+	}
+
+	/**
+	 * Set the period (in seconds) of build status update
+	 * @param updatePeriodInSeconds the period (in seconds) of build status update
+	 */
+	public void setUpdatePeriodInSeconds(String updatePeriodInSeconds)
+	{
+		if (updatePeriodInSeconds != null)
+		{
+			try
+			{
+				setUpdatePeriodInSeconds(Integer.parseInt(updatePeriodInSeconds));
+			}
+			catch(NumberFormatException e)
+			{
+				setUpdatePeriodInSeconds(300);
+			}
+		}
+		else
+		{
+			setUpdatePeriodInSeconds(300);
+		}
+	}
+
+	/**
+	 * Get the bamboo user name
+	 * @return the bamboo user name
+	 */
+	public String getUsername()
+	{
+		return this.username;
+	}
+
+	/**
+	 * Set the bamboo user name
+	 * @param username the bamboo user name
+	 */
+	public void setUsername(String username)
+	{
+		this.username = username;
+	}
+	
+	/**
+	 * Get the bamboo user password
+	 */
+	public String getPassword()
+	{
+		return this.password;
+	}
+
+	/**
+	 * Set the bamboo user password
+	 * @param password the bamboo user password
+	 */
+	public void setPassword(String password)
+	{
+		this.password = password;
+	}
+	
+	/**
+	 * Get the favourite projects only flag
+	 */
+	public Boolean getFavouriteProjectsOnly()
+	{
+		return this.favouriteProjectsOnly;
+	}
+
+	/**
+	 * Set the favourite projects only flag
+	 * @param favouriteProjectsOnly the bamboo user password
+	 */
+	public void setFavouriteProjectsOnly(Boolean favouriteProjectsOnly)
+	{
+		this.favouriteProjectsOnly = favouriteProjectsOnly;
+	}
+
+	/**
+	 * Set the favourite projects only flag
+	 * @param favouriteProjectsOnly the bamboo user password
+	 */
+	public void setFavouriteProjectsOnly(String favouriteProjectsOnly)
+	{
+		if (favouriteProjectsOnly != null)
+		{
+			setFavouriteProjectsOnly(Boolean.parseBoolean(favouriteProjectsOnly));
+		}
+		else
+		{
+			setFavouriteProjectsOnly(new Boolean(false));
+		}
+	}
+	
+	/**
+	 * Get the bamboo project keys
+	 */
+	public List<String> getProjectKeys()
+	{
+		if (this.projectKeys == null || this.projectKeys.equals(""))
+		{
+			return null;
+		}
+		return new ArrayList<String>(Arrays.asList(this.projectKeys.split(",")));
+	}
+
+	/**
+	 * Set the bamboo project keys
+	 * @param projectKeys the bamboo user password
+	 */
+	public void setProjectKeys(String projectKeys)
+	{
+		this.projectKeys = projectKeys;
+	}
+}
