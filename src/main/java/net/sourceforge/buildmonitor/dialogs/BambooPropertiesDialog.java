@@ -605,7 +605,7 @@ public class BambooPropertiesDialog extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JTextField baseURLField;
     private javax.swing.JButton cancelButton;
-    private javax.swing.JCheckBox favouriteProjectsOnly;
+    public javax.swing.JCheckBox favouriteProjectsOnly;
     private javax.swing.JButton okButton;
     private javax.swing.JButton openBaseURLButton;
     public javax.swing.JPasswordField passwordField;
