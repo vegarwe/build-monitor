@@ -69,12 +69,6 @@ public class BambooMonitor implements Monitor
 	// Constants
 	//////////////////////////////
 
-	private static final String REST_LOGIN_URL = "/api/rest/login.action";
-
-	private static final String REST_LIST_BUILD_NAMES_URL = "/api/rest/listBuildNames.action";
-
-	private static final String REST_GET_LATEST_BUILD_RESULTS_URL = "/api/rest/getLatestBuildResults.action";
-
 	private static final String URL_ENCODING = "UTF-8";
 
 	//////////////////////////////
@@ -126,7 +120,6 @@ public class BambooMonitor implements Monitor
 	 */
 	public void run()
 	{
-		String authenticationIdentifier = getNewBambooTicket();
 		while (!this.stop)
 		{
 			try
@@ -155,40 +148,6 @@ public class BambooMonitor implements Monitor
 		}
 	}
 	
-	/**
-	 * Returns a new Bamboo authentication identifier (bamboo ticket)
-	 * @return
-	 */
-	private String getNewBambooTicket()
-	{
-		while (true)
-		{
-			try
-			{
-				String bambooUsername = null;
-				String bambooPassword = null;
-				String bambooServerBaseUrl = null;
-				synchronized (this.bambooProperties)
-				{
-					bambooUsername = this.bambooProperties.getUsername();
-					bambooPassword = this.bambooProperties.getPassword();
-					bambooServerBaseUrl = this.bambooProperties.getServerBaseUrl();
-				}
-				return login(bambooServerBaseUrl, bambooUsername, bambooPassword);
-			}
-			catch (MonitoringException e)
-			{
-				this.buildMonitorInstance.reportMonitoringException(e);
-				try
-				{
-					Thread.sleep(15000);
-				} catch (InterruptedException ie)
-				{
-				}
-			}			
-		}
-	}
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -281,78 +240,6 @@ public class BambooMonitor implements Monitor
 	}
 
 	
-	/**
-	 * Login and create an authentication token.
-	 * Returns the token if login was successful, or returns an error (MonitoringException) otherwise.
-	 * @param theBambooServerBaseURL base URL to the bamboo server
-	 */
-	private String login(String theBambooServerBaseURL, String theUsername, String thePassword) throws MonitoringException
-	{
-		String returnedValue = null;
-		try
-		{
-			// Call the login URL an retrieve the server response
-			URL methodURL = new URL(theBambooServerBaseURL + REST_LOGIN_URL + "?username=" + URLEncoder.encode(theUsername, URL_ENCODING) + "&password=" + URLEncoder.encode(thePassword, URL_ENCODING));
-			String serverResponse = returnedValue = callBambooApi(methodURL);
-			InputSource serverResponseIS = new InputSource(new StringReader(serverResponse));
-			returnedValue = XPathFactory.newInstance().newXPath().evaluate("/response/auth", serverResponseIS);
-		}
-		catch(MonitoringException e)
-		{
-			throw e;
-		}
-		catch (Throwable e)
-		{
-			throw new MonitoringException(e, null);
-		}
-		return returnedValue;
-	}
-	
-	/**
-	 * Provides a list of all the builds on this Bamboo server.
-	 * @param theBambooServerBaseURL
-	 * @param theAuthenticationIdentifier
-	 * @return
-	 */
-	private Map<String, String> listBuildNames(String theBambooServerBaseURL, String theAuthenticationIdentifier) throws MonitoringException
-	{
-		Map<String, String> returnedValue = new Hashtable<String, String>();
-		try
-		{
-			// Call the list build names URL an retrieve the server response
-			URL methodURL = new URL(theBambooServerBaseURL + REST_LIST_BUILD_NAMES_URL + "?auth=" + URLEncoder.encode(theAuthenticationIdentifier, URL_ENCODING));
-			String serverResponse = callBambooApi(methodURL);
-			int currentBuildNameIndex = 1;
-			boolean moreBuildNames = true;
-			while (moreBuildNames)
-			{
-				InputSource serverResponseIS = new InputSource(new StringReader(serverResponse));
-				String currentBuildName = XPathFactory.newInstance().newXPath().evaluate("/response/build[" + currentBuildNameIndex + "]/name", serverResponseIS);
-				serverResponseIS = new InputSource(new StringReader(serverResponse));
-				String currentBuildKey = XPathFactory.newInstance().newXPath().evaluate("/response/build[" + currentBuildNameIndex + "]/key", serverResponseIS);
-				if ("".equals(currentBuildKey))
-				{
-					moreBuildNames = false;
-				}
-				else
-				{
-					returnedValue.put(currentBuildKey, currentBuildName);
-					currentBuildNameIndex++;
-				}
-			}
-		}
-		catch(MonitoringException e)
-		{
-			throw e;
-		}
-		catch (Throwable e)
-		{
-			throw new MonitoringException(e, null);
-		}
-		return returnedValue;
-	}
-	
-
 	private String getNamedChildNodeValue(NodeList nodes, String nodeName) throws MonitoringException
 	{
 		for (int i = 0; i < nodes.getLength(); i++)
@@ -365,64 +252,9 @@ public class BambooMonitor implements Monitor
 		throw new MonitoringException("Unable to find node with name" + nodeName, null);
 	}
 
-	private BuildReport getLatestBuildResults(String theBambooServerBaseURL, String theAuthenticationIdentifier, String theBuildKey) throws MonitoringException
-	{
-		BuildReport returnedValue = null;
-		try
-		{
-			URL methodURL = new URL(theBambooServerBaseURL + REST_GET_LATEST_BUILD_RESULTS_URL + "?auth=" + URLEncoder.encode(theAuthenticationIdentifier, URL_ENCODING) + "&buildKey=" + URLEncoder.encode(theBuildKey, URL_ENCODING));
-			String serverResponse = callBambooApi(methodURL);
-			returnedValue = new BuildReport();
-			returnedValue.setId(theBuildKey);
-			InputSource serverResponseIS = new InputSource(new StringReader(serverResponse));
-			String buildState = XPathFactory.newInstance().newXPath().evaluate("/response/buildState", serverResponseIS);
-			if ("Successful".equals(buildState))
-			{
-				returnedValue.setStatus(Status.OK);
-			}
-			else if ("Failed".equals(buildState))
-			{
-				returnedValue.setStatus(Status.FAILED);
-			}
-			else if ("".equals(buildState))
-			{
-				//returnedValue.setStatus(Status.EMPTY);
-				returnedValue.setStatus(Status.FAILED);
-			}
-			else
-			{
-				throw new MonitoringException("Unknown build state '" + buildState + "' returned for build " + theBuildKey, null);
-			}
-			serverResponseIS = new InputSource(new StringReader(serverResponse));
-			String buildTime = XPathFactory.newInstance().newXPath().evaluate("/response/buildTime", serverResponseIS);
-			// TODO: IS IT A CONSTANT OR A SERVER PARAMETER ?
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-			try
-			{
-				returnedValue.setDate(dateFormat.parse(buildTime));
-			}
-			catch (ParseException e)
-			{
-				// TODO: display a message to the end user to asl for defining another value for the date parser ????
-			}
-			serverResponseIS = new InputSource(new StringReader(serverResponse));
-		}
-		catch(MonitoringException e)
-		{
-			throw e;
-		}
-		catch (Throwable t)
-		{
-			throw new MonitoringException(t, null);
-		}
-		return returnedValue;
-	}
-	
 	/**
 	 * Provides the latest build results for the given buildName.
 	 * @param bambooServerBaseUrl
-	 * @param authenticationIdentifier
-	 * @param buildKey
 	 * @return
 	 */
 	private List<BuildReport> getFavouriteProjects(String bambooServerBaseUrl) throws MonitoringException
@@ -471,41 +303,6 @@ public class BambooMonitor implements Monitor
 					throw new MonitoringException("Unknown build state '" + buildState + "' returned", null);
 				}
 				returnList.add(report);
-
-				//	BuildReport report = new BuildReport();
-				//	NodeList childNodes = nodes.item(i).getChildNodes();
-
-				//	String projectName = getNamedChildNodeValue(childNodes, "projectName");
-				//	String buildState = getNamedChildNodeValue(childNodes, "buildState");
-				//	String buildName = getNamedChildNodeValue(childNodes, "buildName");
-				//	String buildTime = getNamedChildNodeValue(childNodes, "buildTime");
-
-				//	report.setId(getNamedChildNodeValue(childNodes, "buildKey"));
-				//	report.setName(projectName + " - " + buildName);
-
-				//	if ("Successful".equals(buildState))
-				//	{
-				//		report.setStatus(Status.OK);
-				//	}
-				//	else if ("Failed".equals(buildState))
-				//	{
-				//		report.setStatus(Status.FAILED);
-				//	}
-				//	else
-				//	{
-				//		throw new MonitoringException("Unknown build state '" + buildState + "' returned for project " + theProjectKey, null);
-				//	}
-
-				//	try
-				//	{
-				//		report.setDate(dateFormat.parse(buildTime));
-				//	}
-				//	catch (ParseException e)
-				//	{
-				//		// TODO: display a message to the end user to asl for defining another value for the date parser ????
-				//	}
-
-				//	returnList.add(report);
 			}
 
 		}
