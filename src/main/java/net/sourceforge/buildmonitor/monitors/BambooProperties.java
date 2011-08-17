@@ -68,12 +68,11 @@ public class BambooProperties
 	private static final String BAMBOO_FAVOURITE_PROJECTS_ONLY = "bamboo.favourite.projects.only";
 	private static final String USER_PROPERTIES_FILE = "bamboo-monitor.properties";
 
-	private String serverBaseUrl = null;
-	private String username = null;
-	private String password = null;
-	private Integer updatePeriodInSeconds = null;
-	private Boolean favouriteProjectsOnly = null;
-	private String projectKeys = null;
+	private String serverBaseUrl;
+	private String username;
+	private String password;
+	private Integer updatePeriodInSeconds;
+	private Boolean favouriteProjectsOnly;
 
 	public BambooProperties()
 	{
@@ -106,7 +105,6 @@ public class BambooProperties
 			setServerBaseUrl(bambooMonitorProperties.getProperty(BAMBOO_SERVER_BASE_URL_PROPERTY_KEY));
 			setUpdatePeriodInSeconds(bambooMonitorProperties.getProperty(UPDATE_PERIOD_IN_SECONDS_PROPERTY_KEY));
 			setUsername(bambooMonitorProperties.getProperty(BAMBOO_USERNAME_PROPERTY_KEY));
-			setProjectKeys(bambooMonitorProperties.getProperty(BAMBOO_PROJECT_PROPERTY_KEY));
 			setFavouriteProjectsOnly(bambooMonitorProperties.getProperty(BAMBOO_FAVOURITE_PROJECTS_ONLY));
 			String proppassword = bambooMonitorProperties.getProperty(BAMBOO_PASSWORD_PROPERTY_KEY);
 			if (proppassword.startsWith("{base64}"))
@@ -129,16 +127,10 @@ public class BambooProperties
 		synchronized (this)
 		{
 			String proppassword = "{base64}" + new String(Base64.encodeBase64(getPassword().getBytes()));
-			String propProjectKeys = this.projectKeys;
-			if (propProjectKeys == null)
-			{
-				propProjectKeys = "";
-			}
 			bambooMonitorProperties.setProperty(BAMBOO_SERVER_BASE_URL_PROPERTY_KEY, getServerBaseUrl());
 			bambooMonitorProperties.setProperty(BAMBOO_USERNAME_PROPERTY_KEY, getUsername());
 			bambooMonitorProperties.setProperty(BAMBOO_PASSWORD_PROPERTY_KEY, proppassword);
 			bambooMonitorProperties.setProperty(BAMBOO_FAVOURITE_PROJECTS_ONLY, "" + getFavouriteProjectsOnly());
-			bambooMonitorProperties.setProperty(BAMBOO_PROJECT_PROPERTY_KEY, propProjectKeys);
 			bambooMonitorProperties.setProperty(UPDATE_PERIOD_IN_SECONDS_PROPERTY_KEY, "" + getUpdatePeriodInSeconds());
 		}
 		
@@ -336,26 +328,5 @@ public class BambooProperties
 		{
 			setFavouriteProjectsOnly(new Boolean(false));
 		}
-	}
-	
-	/**
-	 * Get the bamboo project keys
-	 */
-	public List<String> getProjectKeys()
-	{
-		if (this.projectKeys == null || this.projectKeys.equals(""))
-		{
-			return null;
-		}
-		return new ArrayList<String>(Arrays.asList(this.projectKeys.split(",")));
-	}
-
-	/**
-	 * Set the bamboo project keys
-	 * @param projectKeys the bamboo user password
-	 */
-	public void setProjectKeys(String projectKeys)
-	{
-		this.projectKeys = projectKeys;
 	}
 }
