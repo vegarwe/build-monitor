@@ -15,45 +15,17 @@
  */
 package net.sourceforge.buildmonitor.monitors;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.net.ConnectException;
-import java.net.HttpURLConnection;
-import java.net.SocketException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.net.UnknownHostException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Arrays;
-import java.util.Map;
 import java.util.Properties;
-
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.codec.binary.Base64;
 
-import net.sourceforge.buildmonitor.BuildMonitor;
-import net.sourceforge.buildmonitor.BuildReport;
-import net.sourceforge.buildmonitor.MonitoringException;
-import net.sourceforge.buildmonitor.BuildReport.Status;
 import net.sourceforge.buildmonitor.dialogs.BambooPropertiesDialog;
-
-import org.xml.sax.InputSource;
 
 /**
  * Set of properties needed to monitor a bamboo server.
@@ -141,13 +113,19 @@ public class BambooProperties
 		buildMonitorPropertiesOutputStream.close();
 	}
 
-	public void displayOptionsDialog(boolean isDialogOpenedForPropertiesCreation, BambooPropertiesDialog optionsDialog)
+	public BambooPropertiesDialog displayOptionsDialog(boolean isDialogOpenedForPropertiesCreation)
 	{
+
+		BambooPropertiesDialog optionsDialog = new BambooPropertiesDialog(null, true);
+		//optionsDialog.setIconImage(buildMonitorInstance.getDialogsDefaultIcon());
+		optionsDialog.setTitle("Bamboo server monitoring parameters");
+		optionsDialog.pack();
+
 		if (optionsDialog.isVisible())
 		{
 			optionsDialog.setVisible(true);
 			optionsDialog.toFront();
-			return;
+			return optionsDialog;
 		}
 
 		optionsDialog.baseURLField.setText(getServerBaseUrl());
@@ -196,6 +174,7 @@ public class BambooProperties
 				throw new RuntimeException(e);
 			}
 		}			
+		return optionsDialog;
 	}
 
 	/**
