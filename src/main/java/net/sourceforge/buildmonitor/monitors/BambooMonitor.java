@@ -82,16 +82,11 @@ public class BambooMonitor implements Monitor
 	{
 		this.buildMonitorInstance = buildMonitorInstance;
 
-		optionsDialog = new BambooPropertiesDialog(null, true);
-		optionsDialog.setIconImage(buildMonitorInstance.getDialogsDefaultIcon());
-		optionsDialog.setTitle("Bamboo server monitoring parameters");
-		optionsDialog.pack();
-
 		bambooProperties.loadFromFile();
 
 		if (monitorPropertiesNotDefined())
 		{
-			displayOptionsDialog(true);
+			BambooPropertiesDialog optionsDialog = displayOptionsDialog(true);
 			if (optionsDialog.getLastClickedButton() != BambooPropertiesDialog.BUTTON_OK)
 			{
 				System.exit(0);
@@ -201,15 +196,17 @@ public class BambooMonitor implements Monitor
 		return "Bamboo server";
 	}
 
-	private void displayOptionsDialog(boolean isDialogOpenedForPropertiesCreation)
+	private BambooPropertiesDialog displayOptionsDialog(boolean isDialogOpenedForPropertiesCreation)
 	{
-		bambooProperties.displayOptionsDialog(isDialogOpenedForPropertiesCreation, optionsDialog);
+		BambooPropertiesDialog optionsDialog = null;
+		optionsDialog = bambooProperties.displayOptionsDialog(isDialogOpenedForPropertiesCreation);
 
 		if (optionsDialog.getLastClickedButton() == BambooPropertiesDialog.BUTTON_OK)
 		{
 			// make sure that the new properties are taken into account immediately ?
 			buildMonitorInstance.reportConfigurationUpdatedToBeTakenIntoAccountImmediately();
 		}
+		return optionsDialog;
 	}
 
 	
