@@ -65,6 +65,12 @@ import org.xml.sax.InputSource;
  */
 public class BambooMonitor implements Monitor
 {
+	private class BuildProject
+	{
+		public String key;
+		public String name;
+	}
+
 	private static final String URL_ENCODING = "UTF-8";
 
 	private BuildMonitor buildMonitorInstance = null;
@@ -103,7 +109,11 @@ public class BambooMonitor implements Monitor
 			try
 			{
 				String bambooServerBaseUrl  = bambooProperties.getServerBaseUrl();
-				List<BuildReport> lastBuildStatus = getFavouriteProjects(bambooServerBaseUrl);
+				List<BuildReport> lastBuildStatus = new ArrayList<BuildReport>();
+				for (BuildProject project : getProjects(bambooServerBaseUrl))
+				{
+					lastBuildStatus.addAll(getResultsForProject(bambooServerBaseUrl, project));
+				}
 	
 				buildMonitorInstance.updateBuildStatus(lastBuildStatus);
 				sleepInSeconds(bambooProperties.getUpdatePeriodInSeconds());
@@ -191,25 +201,93 @@ public class BambooMonitor implements Monitor
 		return "Bamboo server";
 	}
 
-	//////////////////////////////
-	// Private methods
-	//////////////////////////////
-
 	private void displayOptionsDialog(boolean isDialogOpenedForPropertiesCreation)
 	{
 		bambooProperties.displayOptionsDialog(isDialogOpenedForPropertiesCreation, optionsDialog);
 
 		if (optionsDialog.getLastClickedButton() == BambooPropertiesDialog.BUTTON_OK)
 		{
-			
 			// make sure that the new properties are taken into account immediately ?
 			buildMonitorInstance.reportConfigurationUpdatedToBeTakenIntoAccountImmediately();
 		}
 	}
 
 	
-	private String getNamedChildNodeValue(NodeList nodes, String nodeName) throws MonitoringException
+	private List<BuildProject> getProjects(String bambooServerBaseUrl) throws MonitoringException
 	{
+		List returnList = new ArrayList<BuildReport>();
+		try
+		{
+			String methodURL = bambooServerBaseUrl + "/rest/api/latest/plan"
+					+ "?os_authType=basic&os_username=" + URLEncoder.encode(bambooProperties.getUsername(), URL_ENCODING)
+					+ "&os_password=" + URLEncoder.encode(bambooProperties.getPassword(), URL_ENCODING);
+			if (bambooProperties.getFavouriteProjectsOnly())
+			{
+				methodURL += "&favourite";
+			}
+			String serverResponse = callBambooApi(new URL(methodURL));
+			InputSource serverResponseIS = new InputSource(new StringReader(serverResponse));
+
+			NodeList nodes = (NodeList) XPathFactory.newInstance().newXPath().evaluate("/plans/plans/plan", serverResponseIS, XPathConstants.NODESET);
+			for (int i = 0; i < nodes.getLength(); i++)
+			{
+				Element e = (Element) nodes.item(i);
+				BuildProject project = new BuildProject();
+				project.key = e.getAttribute("key");
+				project.name = e.getAttribute("name");
+				returnList.add(project);
+			}
+		}
+		catch (Throwable t)
+		{
+			throw new MonitoringException(t, null);
+		}
+		return returnList;
+	}
+
+	private List<BuildReport> getResultsForProject(String bambooServerBaseUrl, BuildProject project) throws MonitoringException
+	{
+		List returnList = new ArrayList<BuildReport>();
+		try
+		{
+			String methodURL = bambooServerBaseUrl + "/rest/api/latest/result/" + project.key
+					+ "?os_authType=basic&os_username=" + URLEncoder.encode(bambooProperties.getUsername(), URL_ENCODING)
+					+ "&expand=results[0].result"
+					+ "&os_password=" + URLEncoder.encode(bambooProperties.getPassword(), URL_ENCODING);
+			if (bambooProperties.getFavouriteProjectsOnly())
+			{
+				methodURL += "&favourite";
+			}
+			String serverResponse = callBambooApi(new URL(methodURL));
+			InputSource serverResponseIS = new InputSource(new StringReader(serverResponse));
+
+			NodeList nodes = (NodeList) XPathFactory.newInstance().newXPath().evaluate("/results/results/result", serverResponseIS, XPathConstants.NODESET);
+			for (int i = 0; i < nodes.getLength(); i++)
+			{
+				Element result = (Element) nodes.item(i);
+				String dateString = getNamedChildNodeValue(result, "buildCompletedTime");
+				String buildState = result.getAttribute("state");
+
+				BuildReport report = new BuildReport();
+				report.setId(result.getAttribute("key"));
+				report.setName(project.name);
+				report.setDate(parseDate(dateString));
+				report.setStatus(parseBuildState(buildState));
+
+				returnList.add(report);
+			}
+
+		}
+		catch (Throwable t)
+		{
+			throw new MonitoringException(t, null);
+		}
+		return returnList;
+	}
+
+	private String getNamedChildNodeValue(Node node, String nodeName) throws MonitoringException
+	{
+		NodeList nodes = node.getChildNodes();
 		for (int i = 0; i < nodes.getLength(); i++)
 		{
 			if (nodeName.equals(nodes.item(i).getNodeName()))
@@ -220,69 +298,41 @@ public class BambooMonitor implements Monitor
 		throw new MonitoringException("Unable to find node with name" + nodeName, null);
 	}
 
-	/**
-	 * Provides the latest build results for the given buildName.
-	 * @param bambooServerBaseUrl
-	 * @return
-	 */
-	private List<BuildReport> getFavouriteProjects(String bambooServerBaseUrl) throws MonitoringException
+	private Date parseDate(String dateString) throws MonitoringException
 	{
-		List returnList = new ArrayList<BuildReport>();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+		// Strip the ':' in the timezone of "2011-08-12T11:25:48.000+02:00"
+		dateString = dateString.substring(0, 26) + dateString.substring(27);
+
 		try
 		{
-			String methodURL = bambooServerBaseUrl + "/rest/api/latest/result"
-					+ "?os_authType=basic&os_username=" + URLEncoder.encode(bambooProperties.getUsername(), URL_ENCODING)
-					+ "&os_password=" + URLEncoder.encode(bambooProperties.getPassword(), URL_ENCODING);
-			if (bambooProperties.getFavouriteProjectsOnly())
-			{
-				methodURL += "&favourite";
-			}
-			String serverResponse = callBambooApi(new URL(methodURL));
-
-			InputSource serverResponseIS = new InputSource(new StringReader(serverResponse));
-			System.out.println("frosken " + methodURL + "\n\n" + serverResponse);
-
-			NodeList nodes = (NodeList) XPathFactory.newInstance().newXPath().evaluate("/results/results/result", serverResponseIS, XPathConstants.NODESET);
-			for (int i = 0; i < nodes.getLength(); i++)
-			{
-				BuildReport report = new BuildReport();
-				Element result = (Element) nodes.item(i);
-				//String buildState = XPathFactory.newInstance().newXPath().evaluate("buildState", serverResponseIS);
-				System.out.println("fisken " + result.getAttribute("key"));
-				report.setId(result.getAttribute("key"));
-				report.setName(result.getAttribute("key"));
-
-				String buildState = result.getAttribute("state");
-				if ("Successful".equals(buildState))
-				{
-					report.setStatus(Status.OK);
-				}
-				else if ("Failed".equals(buildState))
-				{
-					report.setStatus(Status.FAILED);
-				}
-				else if ("".equals(buildState))
-				{
-					//returnedValue.setStatus(Status.EMPTY);
-					report.setStatus(Status.FAILED);
-				}
-				else
-				{
-					throw new MonitoringException("Unknown build state '" + buildState + "' returned", null);
-				}
-				returnList.add(report);
-			}
-
+			return dateFormat.parse(dateString);
 		}
-		catch(MonitoringException e)
+		catch (ParseException e)
 		{
-			throw e;
+			throw new MonitoringException(e, null);
 		}
-		catch (Throwable t)
+	}
+
+	private Status parseBuildState(String buildState) throws MonitoringException
+	{
+		if ("Successful".equals(buildState))
 		{
-			throw new MonitoringException(t, null);
+			return Status.OK;
 		}
-		return returnList;
+		else if ("Failed".equals(buildState))
+		{
+			return Status.FAILED;
+		}
+		else if ("".equals(buildState))
+		{
+			//return Status.EMPTY;
+			return Status.FAILED;
+		}
+		else
+		{
+			throw new MonitoringException("Unknown build state '" + buildState + "' returned", null);
+		}
 	}
 	
 	/**
@@ -410,7 +460,7 @@ public class BambooMonitor implements Monitor
 		return returnedValue;
 	}
 
-	private boolean nmonitorPropertiesNotDefined()
+	private boolean monitorPropertiesNotDefined()
 	{
 		return (
 			(bambooProperties.getServerBaseUrl() == null) ||
