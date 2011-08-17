@@ -65,85 +65,53 @@ import org.xml.sax.InputSource;
  */
 public class BambooMonitor implements Monitor
 {
-	//////////////////////////////
-	// Constants
-	//////////////////////////////
-
 	private static final String URL_ENCODING = "UTF-8";
 
-	//////////////////////////////
-	// Instance attributes
-	//////////////////////////////
-
 	private BuildMonitor buildMonitorInstance = null;
-	
 	private boolean stop = false;
-
 	private BambooProperties bambooProperties = new BambooProperties();
-
 	private BambooPropertiesDialog optionsDialog = null;
 	
-	//////////////////////////////
-	// Constructors
-	//////////////////////////////
-
 	public BambooMonitor(BuildMonitor buildMonitorInstance) throws FileNotFoundException, IOException
 	{
 		this.buildMonitorInstance = buildMonitorInstance;
 
-		// build the options dialog
-		this.optionsDialog = new BambooPropertiesDialog(null, true);
-		this.optionsDialog.setIconImage(this.buildMonitorInstance.getDialogsDefaultIcon());
-		this.optionsDialog.setTitle("Bamboo server monitoring parameters");
-		this.optionsDialog.pack();
+		optionsDialog = new BambooPropertiesDialog(null, true);
+		optionsDialog.setIconImage(buildMonitorInstance.getDialogsDefaultIcon());
+		optionsDialog.setTitle("Bamboo server monitoring parameters");
+		optionsDialog.pack();
 
-		// load the monitor properties
-		this.bambooProperties.loadFromFile();
+		bambooProperties.loadFromFile();
 
-		// if at least one of the properties is not defined, open a window to ask for their definition
-		if ((this.bambooProperties.getServerBaseUrl() == null) || (this.bambooProperties.getUpdatePeriodInSeconds() == null) || (this.bambooProperties.getUsername() == null) || (this.bambooProperties.getPassword() == null))
+		if (monitorPropertiesNotDefined())
 		{
 			displayOptionsDialog(true);
-			if (this.optionsDialog.getLastClickedButton() != BambooPropertiesDialog.BUTTON_OK)
+			if (optionsDialog.getLastClickedButton() != BambooPropertiesDialog.BUTTON_OK)
 			{
 				System.exit(0);
 			}
 		}
 	}
 
-	//////////////////////////////
-	// Monitor implementation
-	//////////////////////////////
-	
 	/**
 	 * {@inheritDoc}
 	 */
 	public void run()
 	{
-		while (!this.stop)
+		while (!stop)
 		{
 			try
 			{
 				String bambooServerBaseUrl  = bambooProperties.getServerBaseUrl();
-
 				List<BuildReport> lastBuildStatus = getFavouriteProjects(bambooServerBaseUrl);
-
-				this.buildMonitorInstance.updateBuildStatus(lastBuildStatus);
 	
-				// wait before updating the build status again
-				try
-				{
-					Thread.sleep(bambooProperties.getUpdatePeriodInSeconds() * 1000);
-				} catch (InterruptedException e)
-				{
-					// Nothing to do: continue !
-				}
+				buildMonitorInstance.updateBuildStatus(lastBuildStatus);
+				sleepInSeconds(bambooProperties.getUpdatePeriodInSeconds());
 			}
 			catch (MonitoringException e)
 			{
-				this.buildMonitorInstance.reportMonitoringException(e);
-				// wait one second before trying again
-				try { Thread.sleep(1000); } catch (InterruptedException e2) { }
+				buildMonitorInstance.reportMonitoringException(e);
+				sleepInSeconds(1);
 			}
 		}
 	}
@@ -153,7 +121,7 @@ public class BambooMonitor implements Monitor
 	 */
 	public void stop()
 	{
-		this.stop = true;
+		stop = true;
 	}
 
 	/**
@@ -442,4 +410,23 @@ public class BambooMonitor implements Monitor
 		return returnedValue;
 	}
 
+	private boolean nmonitorPropertiesNotDefined()
+	{
+		return (
+			(bambooProperties.getServerBaseUrl() == null) ||
+			(bambooProperties.getUpdatePeriodInSeconds() == null) ||
+			(bambooProperties.getUsername() == null) ||
+			(bambooProperties.getPassword() == null));
+	}
+
+	private void sleepInSeconds(Integer seconds)
+	{
+		try
+		{
+			Thread.sleep(seconds * 1000);
+		} catch (InterruptedException e)
+		{
+			// Nothing to do: continue!
+		}
+	}
 }
