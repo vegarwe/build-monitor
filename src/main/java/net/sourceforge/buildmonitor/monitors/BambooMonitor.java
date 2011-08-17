@@ -65,7 +65,7 @@ import org.xml.sax.InputSource;
  */
 public class BambooMonitor implements Monitor
 {
-	private class BuildProject
+	private class BuildPlan
 	{
 		public String key;
 		public String name;
@@ -110,9 +110,9 @@ public class BambooMonitor implements Monitor
 			{
 				String bambooServerBaseUrl  = bambooProperties.getServerBaseUrl();
 				List<BuildReport> lastBuildStatus = new ArrayList<BuildReport>();
-				for (BuildProject project : getProjects(bambooServerBaseUrl))
+				for (BuildPlan plan : getProjects(bambooServerBaseUrl))
 				{
-					lastBuildStatus.addAll(getResultsForProject(bambooServerBaseUrl, project));
+					lastBuildStatus.addAll(getResultsForProject(bambooServerBaseUrl, plan));
 				}
 	
 				buildMonitorInstance.updateBuildStatus(lastBuildStatus);
@@ -213,7 +213,7 @@ public class BambooMonitor implements Monitor
 	}
 
 	
-	private List<BuildProject> getProjects(String bambooServerBaseUrl) throws MonitoringException
+	private List<BuildPlan> getProjects(String bambooServerBaseUrl) throws MonitoringException
 	{
 		List returnList = new ArrayList<BuildReport>();
 		try
@@ -232,10 +232,10 @@ public class BambooMonitor implements Monitor
 			for (int i = 0; i < nodes.getLength(); i++)
 			{
 				Element e = (Element) nodes.item(i);
-				BuildProject project = new BuildProject();
-				project.key = e.getAttribute("key");
-				project.name = e.getAttribute("name");
-				returnList.add(project);
+				BuildPlan plan = new BuildPlan();
+				plan.key = e.getAttribute("key");
+				plan.name = e.getAttribute("name");
+				returnList.add(plan);
 			}
 		}
 		catch (Throwable t)
@@ -245,12 +245,12 @@ public class BambooMonitor implements Monitor
 		return returnList;
 	}
 
-	private List<BuildReport> getResultsForProject(String bambooServerBaseUrl, BuildProject project) throws MonitoringException
+	private List<BuildReport> getResultsForProject(String bambooServerBaseUrl, BuildPlan plan) throws MonitoringException
 	{
 		List returnList = new ArrayList<BuildReport>();
 		try
 		{
-			String methodURL = bambooServerBaseUrl + "/rest/api/latest/result/" + project.key
+			String methodURL = bambooServerBaseUrl + "/rest/api/latest/result/" + plan.key
 					+ "?os_authType=basic&os_username=" + URLEncoder.encode(bambooProperties.getUsername(), URL_ENCODING)
 					+ "&expand=results[0].result"
 					+ "&os_password=" + URLEncoder.encode(bambooProperties.getPassword(), URL_ENCODING);
@@ -270,7 +270,7 @@ public class BambooMonitor implements Monitor
 
 				BuildReport report = new BuildReport();
 				report.setId(result.getAttribute("key"));
-				report.setName(project.name);
+				report.setName(plan.name);
 				report.setDate(parseDate(dateString));
 				report.setStatus(parseBuildState(buildState));
 
