@@ -38,9 +38,12 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import javax.xml.xpath.XPathConstants;
+
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+import org.apache.commons.codec.binary.Base64;
 
 import net.sourceforge.buildmonitor.BuildMonitor;
 import net.sourceforge.buildmonitor.BuildReport;
@@ -48,7 +51,6 @@ import net.sourceforge.buildmonitor.MonitoringException;
 import net.sourceforge.buildmonitor.BuildReport.Status;
 import net.sourceforge.buildmonitor.dialogs.BambooPropertiesDialog;
 
-import org.xml.sax.InputSource;
 
 /**
  * The run method of this Runnable implementation monitor a Bamboo build
@@ -209,8 +211,7 @@ public class BambooMonitor implements Monitor
 		try
 		{
 			String methodURL = bambooServerBaseUrl + "/rest/api/latest/plan"
-					+ "?os_authType=basic&os_username=" + URLEncoder.encode(bambooProperties.getUsername(), URL_ENCODING)
-					+ "&os_password=" + URLEncoder.encode(bambooProperties.getPassword(), URL_ENCODING);
+					+ "?os_authType=basic";
 			if (bambooProperties.getFavouriteProjectsOnly())
 			{
 				methodURL += "&favourite";
@@ -241,9 +242,8 @@ public class BambooMonitor implements Monitor
 		try
 		{
 			String methodURL = bambooServerBaseUrl + "/rest/api/latest/result/" + plan.key
-					+ "?os_authType=basic&os_username=" + URLEncoder.encode(bambooProperties.getUsername(), URL_ENCODING)
-					+ "&expand=results[0].result"
-					+ "&os_password=" + URLEncoder.encode(bambooProperties.getPassword(), URL_ENCODING);
+					+ "?os_authType=basic"
+					+ "&expand=results[0].result";
 			if (bambooProperties.getFavouriteProjectsOnly())
 			{
 				methodURL += "&favourite";
@@ -340,7 +340,12 @@ public class BambooMonitor implements Monitor
 		try
 		{
 			// Call the Bamboo api and retrieve the server response
+			String authString = bambooProperties.getUsername() + ":" + bambooProperties.getPassword();
+			authString = new String(Base64.encodeBase64(authString.getBytes()));
+
 			urlConnection = (HttpURLConnection) theURL.openConnection();
+			urlConnection.setDoOutput(true);
+			urlConnection.setRequestProperty("Authorization", "Basic " + authString);
 			urlConnection.connect();
 			urlConnectionReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
 			String line = null;
