@@ -54,16 +54,24 @@ public class BambooProperties
 		this.updatePeriodInSeconds = 300;
 		this.favouriteProjectsOnly = new Boolean(false);
 	}
-	
+
 	/**
 	 * Load the properties from the {@link #USER_PROPERTIES_FILE} file in the
 	 * user home directory.
 	 */
 	public void loadFromFile() throws FileNotFoundException, IOException
 	{
+		loadFromFile(new File(System.getProperty("user.home"), USER_PROPERTIES_FILE));
+	}
+	
+	/**
+	 * Load the properties file
+         * @param bambooMonitorPropertiesFile the properties file
+	 */
+	public void loadFromFile(File bambooMonitorPropertiesFile) throws FileNotFoundException, IOException
+	{
 		// Load the content of the properties file into a Properties object
 		Properties bambooMonitorProperties = new Properties();
-		File bambooMonitorPropertiesFile = new File(System.getProperty("user.home"), USER_PROPERTIES_FILE);
 		if (bambooMonitorPropertiesFile.exists())
 		{
 			FileInputStream bambooMonitorPropertiesFileIS = new FileInputStream(bambooMonitorPropertiesFile);

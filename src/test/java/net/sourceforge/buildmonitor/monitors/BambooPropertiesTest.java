@@ -17,7 +17,10 @@ package net.sourceforge.buildmonitor.monitor;
 
 import net.sourceforge.buildmonitor.monitors.BambooProperties;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import junit.framework.TestCase;
 
 /**
@@ -28,36 +31,23 @@ import junit.framework.TestCase;
 public class BambooPropertiesTest extends TestCase
 {
 	
-	public void testloadFromFileBase64Password()
+	public void testloadFromFileBase64Password() throws IOException, MalformedURLException, java.net.URISyntaxException
 	{
+		File properties = new File(getClass().getClassLoader().getResource("base64pass/bamboo-monitor.properties").toURI());
+
 		BambooProperties bambooProperties = new BambooProperties();
-		try {
-			System.setProperty("user.home", "/home/vewe/devel/build-monitor/src/test/resources/base64pass");
-			bambooProperties.loadFromFile();
-		} catch (IOException e) {}
+		bambooProperties.loadFromFile(properties);
+
 		assertEquals(bambooProperties.getPassword(), "testpassord");
 	}
 	
-	public void testloadFromFilePlaintextPassword()
+	public void testloadFromFilePlaintextPassword() throws Exception
 	{
+		File properties = new File(getClass().getClassLoader().getResource("plainpass/bamboo-monitor.properties").toURI());
+
 		BambooProperties bambooProperties = new BambooProperties();
-		try {
-			System.setProperty("user.home", "/home/vewe/devel/build-monitor/src/test/resources/plainpass");
-			bambooProperties.loadFromFile();
-		} catch (IOException e) {}
-		assertEquals(bambooProperties.getPassword(), "testpassord");
-	}
-	
-	public void testSaveToFilePlaintextPassword()
-	{
-		BambooProperties bambooProperties = new BambooProperties();
-		try {
-			System.setProperty("user.home", "/home/vewe/devel/build-monitor/src/test/resources/plainpass");
-			bambooProperties.loadFromFile();
-			System.setProperty("user.home", "/home/vewe/devel/build-monitor/src/test/resources/tmp");
-			bambooProperties.saveToFile();
-			bambooProperties.loadFromFile();
-		} catch (IOException e) {}
+		bambooProperties.loadFromFile(properties);
+
 		assertEquals(bambooProperties.getPassword(), "testpassord");
 	}
 }
