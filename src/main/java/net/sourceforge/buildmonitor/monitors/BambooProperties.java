@@ -79,7 +79,7 @@ public class BambooProperties
 			setUsername(bambooMonitorProperties.getProperty(BAMBOO_USERNAME_PROPERTY_KEY));
 			setFavouriteProjectsOnly(bambooMonitorProperties.getProperty(BAMBOO_FAVOURITE_PROJECTS_ONLY));
 			String proppassword = bambooMonitorProperties.getProperty(BAMBOO_PASSWORD_PROPERTY_KEY);
-			if (proppassword.startsWith("{base64}"))
+			if (proppassword != null && proppassword.startsWith("{base64}"))
 			{
 				proppassword = proppassword.substring(8);
 				proppassword = new String(Base64.decodeBase64(proppassword.getBytes()));
