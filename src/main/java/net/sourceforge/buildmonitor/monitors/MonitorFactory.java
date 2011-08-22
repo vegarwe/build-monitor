@@ -41,16 +41,12 @@ public class MonitorFactory
 		{
 			return new BambooMonitor(impl);
 		}
-		else if (Launcher.CRUISE_CONTROL_MONITOR.equals(monitorName))
-		{
-			return new CruiseControlRssMonitor(impl);
-		}
 		else
 		{
 			throw new RuntimeException("\n\n" + monitorName + " is not a supported monitor.\n"
 					+ "Supported monitors are:\n"
 					+ "\tbamboo (for monitoring Atlassian Bamboo continuous build server)\n"
-					+ "\tcc (for monitoring Cruise Control continuous build server)\n");
+					);
 		}
 		
 	}

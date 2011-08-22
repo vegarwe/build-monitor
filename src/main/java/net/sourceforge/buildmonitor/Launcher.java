@@ -16,13 +16,11 @@
 package net.sourceforge.buildmonitor;
 
 import java.security.Security;
-
 import javax.swing.UIManager;
 
-import net.sourceforge.buildmonitor.monitors.BambooMonitor;
-import net.sourceforge.buildmonitor.monitors.CruiseControlRssMonitor;
 import net.sourceforge.buildmonitor.monitors.Monitor;
 import net.sourceforge.buildmonitor.monitors.MonitorFactory;
+import net.sourceforge.buildmonitor.monitors.BambooMonitor;
 
 /**
  * The class to use to launch the BuildMonitorImpl application.
@@ -38,8 +36,6 @@ public class Launcher
 	public static final String MONITOR_PARAMETER = "-monitor";
 	
 	public static final String BAMBOO_MONITOR = "bamboo";
-	
-	public static final String CRUISE_CONTROL_MONITOR = "cc";
 	
 	////////////////////////////////////////
 	// Main
