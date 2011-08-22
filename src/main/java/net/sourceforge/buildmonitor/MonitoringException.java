@@ -24,16 +24,6 @@ import java.net.URI;
  */
 public class MonitoringException extends Exception
 {
-	/////////////////////////////
-	// Constants
-	/////////////////////////////
-
-	private static final long serialVersionUID = 1875572548525646573L;
-
-	/////////////////////////////
-	// Instance attributes
-	/////////////////////////////
-
 	/**
 	 * Signal that the exception might be related to a bad option (parameter) of the monitor
 	 */
@@ -43,10 +33,6 @@ public class MonitoringException extends Exception
 	 * An URI that might be opened in the web browser by the end user in order to solve the problem
 	 */
 	private URI customRelatedURI = null;
-	
-	/////////////////////////////
-	// Constructors
-	/////////////////////////////
 	
 	/**
 	 * Create a new instance of the exception not related to a bad option (user parameter) of the monitor.
@@ -132,10 +118,6 @@ public class MonitoringException extends Exception
 		this.customRelatedURI = theRelatedURI;
 	}
 
-	/////////////////////////////////////
-	// Getters
-	/////////////////////////////////////
-	
 	/**
 	 * {@inheritDoc}
 	 */

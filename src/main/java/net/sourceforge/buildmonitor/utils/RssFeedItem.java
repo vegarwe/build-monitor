@@ -24,30 +24,15 @@ import java.util.Date;
  */
 public class RssFeedItem
 {
-	//////////////////////////////////
-	// Attributes
-	//////////////////////////////////
-	
 	private String title = null;
-	
 	private String description = null;
-	
 	private Date pubDate = null;
-	
 	private String link = null;
-
-	//////////////////////////////////
-	// Constructors
-	//////////////////////////////////
 
 	public RssFeedItem()
 	{
 	}
 
-	//////////////////////////////////
-	// Accessors
-	//////////////////////////////////
-	
 	public String getDescription()
 	{
 		return description;

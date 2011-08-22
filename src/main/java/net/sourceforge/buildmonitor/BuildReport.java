@@ -25,10 +25,6 @@ import java.util.Date;
  */
 public class BuildReport
 {
-	/////////////////////////////
-	// Nested class
-	/////////////////////////////
-
 	/**
 	 * A comparator to use to compare BuildReport instance according to their names.
 	 * Note: this comparator imposes orderings that are inconsistent with equals.
@@ -116,20 +112,12 @@ public class BuildReport
 		
 	}
 
-	/////////////////////////////
-	// Enums
-	/////////////////////////////
-	
 	/**
 	 * Status of a build
 	 * @author sbrunot
 	 *
 	 */
 	public enum Status {OK, FAILED, EMPTY};
-
-	/////////////////////////////
-	// Instance attributes
-	/////////////////////////////
 
 	/**
 	 * Id of the build
@@ -150,10 +138,6 @@ public class BuildReport
 	 * Date of the build
 	 */
 	private Date date;
-
-	/////////////////////////////
-	// Constructor
-	/////////////////////////////
 
 	/**
 	 * No args constructor
@@ -176,10 +160,6 @@ public class BuildReport
 		this.status = theStatus;
 	}
 	
-	/////////////////////////////
-	// Getters and setters
-	/////////////////////////////
-
 	/**
 	 * Get the date of the build
 	 *  @return the date of the build

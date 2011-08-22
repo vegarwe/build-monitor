@@ -35,34 +35,18 @@ import org.xml.sax.helpers.XMLReaderFactory;
  */
 public class RssFeedReader
 {
-	/////////////////////////////////
-	// Nested classes
-	/////////////////////////////////
-
 	public class RssFeedContentHandler extends DefaultHandler
 	{
-		///////////////////////////////
-		// Constants
-		///////////////////////////////
-
 		private static final int TITLE_ATTRIBUTE = 1;
 		private static final int DESCRIPTION_ATTRIBUTE = 2;
 		private static final int PUBDATE_ATTRIBUTE = 3;
 		private static final int LINK_ATTRIBUTE = 4;
 		
-		///////////////////////////////
-		// Attributes
-		///////////////////////////////
-
 		RssFeedDocument rssFeedDocument = null;
 		RssFeedItem currentItem = null;
 		int currentItemAttributeToSet = -1;
 		DateFormat rssFeedDateFormat = null;
 		
-		///////////////////////////////
-		// Constructor
-		///////////////////////////////
-
 		public RssFeedContentHandler(DateFormat theRssFeedDateFormat)
 		{
 			if (theRssFeedDateFormat == null)
@@ -71,10 +55,6 @@ public class RssFeedReader
 			}
 			this.rssFeedDateFormat = theRssFeedDateFormat;
 		}
-		
-		///////////////////////////////
-		// ContentHandler implementation
-		///////////////////////////////
 		
 		public void startDocument()
 		{
@@ -130,18 +110,10 @@ public class RssFeedReader
 			}
 		}
 
-		///////////////////////////////
-		// Public methods
-		///////////////////////////////
-
 		public RssFeedDocument getDocument()
 		{
 			return this.rssFeedDocument;
 		}
-
-		///////////////////////////////
-		// Private methods
-		///////////////////////////////
 
 		private void setCurrentItemAttribute(String theValueOfTheAttribute)
 		{
@@ -181,17 +153,8 @@ public class RssFeedReader
 		}
 	}
 	
-	/////////////////////////////////
-	// Attributes
-	/////////////////////////////////
-
 	private URL rssFeedUrl;
-	
 	private DateFormat rssFeedDateFormat;
-	
-	/////////////////////////////////
-	// Constructor
-	/////////////////////////////////
 	
 	public RssFeedReader(URL theRssFeedUrl, DateFormat theRssFeedDateFormat)
 	{
@@ -206,10 +169,6 @@ public class RssFeedReader
 		this.rssFeedUrl = theRssFeedUrl;
 		this.rssFeedDateFormat = theRssFeedDateFormat;
 	}
-
-	/////////////////////////////////
-	// Public methods
-	/////////////////////////////////
 
 	public RssFeedDocument getRssFeedDocument() throws IOException, SAXException
 	{

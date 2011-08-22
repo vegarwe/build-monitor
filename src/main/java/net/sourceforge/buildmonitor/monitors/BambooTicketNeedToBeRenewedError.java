@@ -23,9 +23,5 @@ package net.sourceforge.buildmonitor.monitors;
  */
 public class BambooTicketNeedToBeRenewedError extends Error
 {
-	/////////////////////////////
-	// Constants
-	/////////////////////////////
-
 	private static final long serialVersionUID = 2526968443334989474L;
 }

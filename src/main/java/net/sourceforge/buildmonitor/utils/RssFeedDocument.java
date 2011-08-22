@@ -25,23 +25,11 @@ import java.util.List;
  */
 public class RssFeedDocument
 {
-	//////////////////////////////
-	// Attributes
-	//////////////////////////////
-
 	private List<RssFeedItem> items = new ArrayList<RssFeedItem>();
-	
-	//////////////////////////////
-	// Constructor
-	//////////////////////////////
 	
 	public RssFeedDocument()
 	{
 	}
-
-	//////////////////////////////
-	// Public method
-	//////////////////////////////
 
 	/**
 	 * Get the Nth item of the document.

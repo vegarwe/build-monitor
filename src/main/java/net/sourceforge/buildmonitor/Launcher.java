@@ -29,17 +29,8 @@ import net.sourceforge.buildmonitor.monitors.BambooMonitor;
  */
 public class Launcher
 {
-	////////////////////////////////////////
-	// Constants
-	////////////////////////////////////////
-	
 	public static final String MONITOR_PARAMETER = "-monitor";
-	
 	public static final String BAMBOO_MONITOR = "bamboo";
-	
-	////////////////////////////////////////
-	// Main
-	////////////////////////////////////////
 	
 	/**
 	 * Main method that launch an instance of the BuildMonitorImpl application
@@ -48,8 +39,7 @@ public class Launcher
 	 */
 	public static void main(String[] args)
 	{
-		// The monitor to use
-		// TODO: DO NOT USE A DEFAULT VALUE, BUT PROMPT THE USER FOR THE MONITOR TO USE IF IT IS NOT DEFINED ON THE COMMAND LINE
+		// The default monitor to use
 		String monitor = BAMBOO_MONITOR;
 		
 		System.setProperty("java.protocol.handler.pkgs", "com.sun.net.ssl.internal.www.protocol");
