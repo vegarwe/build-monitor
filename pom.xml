@@ -2,21 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<!--===================-->
-	<!-- BASIC INFORMATION -->
-	<!--===================-->
-
 	<groupId>net.sourceforge</groupId>
 	<artifactId>build-monitor</artifactId>
-	<version>1.0-PREVIEW</version>
+	<version>1.1</version>
 	<packaging>jar</packaging>
 	<name>Build Monitor</name>
 	<description>Build monitor is a Java 6 desktop application that monitor continuous builds.</description>
 	<url>http://build-monitor.sourceforge.net/</url>
-
-	<!--==================-->
-	<!-- DEVELOPMENT TEAM -->
-	<!--==================-->
 
 	<developers>
 		<developer>
@@ -25,11 +17,12 @@
 			<email>sbrunot@gmail.com</email>
 			<url>http://www.linkedin.com/pub/1/646/30b</url>
 		</developer>
+		<developer>
+			<id>vegarwe</id>
+			<name>Vegar Westerlund</name>
+			<url>https://github.com/vegarwe/</url>
+		</developer>
 	</developers>
-
-	<!--=========-->
-	<!-- LICENSE -->
-	<!--=========-->
 
 	<licenses>
 	  <license>
@@ -39,28 +32,16 @@
 	  </license>
 	</licenses>
 
-	<!--==================-->
-	<!-- ISSUE MANAGEMENT -->
-	<!--==================-->
-
 	<issueManagement>
 		<system>Sourceforge</system>
 		<url>http://sourceforge.net/tracker/?group_id=206338</url>
 	</issueManagement>
 
-	<!--====================-->
-	<!-- SOURCES REPOSITORY -->
-	<!--====================-->
-
 	<scm>
-		<connection>scm:cvs:pserver:anoncvs:@build-monitor.cvs.sourceforge.net:/cvsroot/build-monitor:build-monitor</connection>
-		<tag>HEAD</tag>
-		<url>http://build-monitor.cvs.sourceforge.net/build-monitor/build-monitor/</url>
+		<connection>scm:git://build-monitor.git.sourceforge.net/gitroot/build-monitor/build-monitor</connection>
+		<url>http://build-monitor.git.sourceforge.net/git/gitweb.cgi?p=build-monitor/build-monitor</url>
 	</scm>
 
-	<!--=========================-->
-	<!-- DISTRIBUTION MANAGEMENT -->
-	<!--=========================-->
 	<distributionManagement>
 		<site>
 			<id>sourceforge.website</id>
@@ -69,10 +50,6 @@
 		</site>
 	</distributionManagement>
 	
-	<!--===========-->
-	<!-- REPORTING -->
-	<!--===========-->
-
 	<reporting>
 		<plugins>
 			<plugin>
@@ -101,27 +78,14 @@
 					<dateFormat>yyyy-MM-dd HH:mm:ss</dateFormat>
 				</configuration>
 			</plugin>
-			<plugin>
-				<artifactId>maven-surefire-report-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<artifactId>maven-clover-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<artifactId>maven-javadoc-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<artifactId>maven-jxr-plugin</artifactId>
-			</plugin>
+			<plugin><artifactId>maven-surefire-report-plugin</artifactId></plugin>
+			<plugin><artifactId>maven-clover-plugin</artifactId></plugin>
+			<plugin><artifactId>maven-javadoc-plugin</artifactId></plugin>
+			<plugin><artifactId>maven-jxr-plugin</artifactId></plugin>
 		</plugins>
 	</reporting>
 
-	<!--==============-->
-	<!-- DEPENDENCIES -->
-	<!--==============-->
-	
 	<dependencies>
-
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -129,14 +93,12 @@
 			<version>3.8.1</version>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 			<type>jar</type>
 			<version>1.4</version>
 		</dependency>
-
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
@@ -144,10 +106,6 @@
 		</dependency>
 
 	</dependencies>
-
-	<!--=====================-->
-	<!-- BUILD CONFIGURATION -->
-	<!--=====================-->
 
 	<build>
 		<plugins>
@@ -158,49 +116,24 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
-			<!-- The executable jar is produced by the assembly plugin during the package phase -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
-						<descriptorRef>project</descriptorRef>
 					</descriptorRefs>
 					<archive>
 						<manifest>
 							<mainClass>net/sourceforge/buildmonitor/Launcher</mainClass>
-							<addClasspath>true</addClasspath>
 						</manifest>
 					</archive>
 				</configuration>
 				<executions>
 					<execution>
-						<id>make-assembly</id>
 						<phase>package</phase>
 						<goals>
-							<goal>attached</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- Replace the initial jar by the executable one -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<configuration>
-					<tasks>
-						<move file="${basedir}/target/${pom.artifactId}-${pom.version}-jar-with-dependencies.jar"
-						      tofile="${basedir}/target/${pom.artifactId}-${pom.version}.jar"
-						      overwrite="true"/>
-					</tasks>
-				</configuration>
-				<executions>
-					<execution>
-						<id>replace-original-jar-by-executable-jar</id>
-						<phase>package</phase>
-						<goals>
-							<goal>run</goal>
+							<goal>single</goal>
 						</goals>
 					</execution>
 				</executions>
