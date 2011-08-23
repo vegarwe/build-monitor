@@ -33,13 +33,13 @@ public class RssFeedDocument
 
 	/**
 	 * Get the Nth item of the document.
-	 * @param theIndexOfTheItemInTheDocument index of the item in the document (index of the first item is 0).
-	 * @return the theIndexOfTheItemInTheDocument th item in the document.
-	 * @throws IndexOutOfBoundsException if theIndexOfTheItemInTheDocument is < 0 or >= size().
+	 * @param indexOfTheItemInTheDocument index of the item in the document (index of the first item is 0).
+	 * @return the indexOfTheItemInTheDocument th item in the document.
+	 * @throws IndexOutOfBoundsException if indexOfTheItemInTheDocument is < 0 or >= size().
 	 */
-	public RssFeedItem getItem(int theIndexOfTheItemInTheDocument) throws IndexOutOfBoundsException
+	public RssFeedItem getItem(int indexOfTheItemInTheDocument) throws IndexOutOfBoundsException
 	{
-		return this.items.get(theIndexOfTheItemInTheDocument);
+		return this.items.get(indexOfTheItemInTheDocument);
 	}
 	
 	/**
@@ -53,10 +53,10 @@ public class RssFeedDocument
 	
 	/**
 	 * Add an RSS Feed item to the document
-	 * @param theRssFeedItemToAdd the item to add to the document
+	 * @param rssFeedItemToAdd the item to add to the document
 	 */
-	public void add(RssFeedItem theRssFeedItemToAdd)
+	public void add(RssFeedItem rssFeedItemToAdd)
 	{
-		this.items.add(theRssFeedItemToAdd);
+		this.items.add(rssFeedItemToAdd);
 	}
 }

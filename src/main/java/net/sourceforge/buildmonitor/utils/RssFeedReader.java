@@ -47,13 +47,13 @@ public class RssFeedReader
 		int currentItemAttributeToSet = -1;
 		DateFormat rssFeedDateFormat = null;
 		
-		public RssFeedContentHandler(DateFormat theRssFeedDateFormat)
+		public RssFeedContentHandler(DateFormat rssFeedDateFormat)
 		{
-			if (theRssFeedDateFormat == null)
+			if (rssFeedDateFormat == null)
 			{
 				throw new IllegalArgumentException("The RSS Feed date format cannot be null !");
 			}
-			this.rssFeedDateFormat = theRssFeedDateFormat;
+			this.rssFeedDateFormat = rssFeedDateFormat;
 		}
 		
 		public void startDocument()
@@ -61,26 +61,26 @@ public class RssFeedReader
 			this.rssFeedDocument = new RssFeedDocument();
 		}
 
-		public void startElement(String theNameSpace, String theLocalName, String theQName, Attributes theAttributes)
+		public void startElement(String nameSpace, String localName, String qName, Attributes attributes)
 		{
-			if ("item".equals(theLocalName))
+			if ("item".equals(localName))
 			{
 				// this is a new Item
 				this.currentItem = new RssFeedItem();
 			}
-			else if ("title".equals(theLocalName))
+			else if ("title".equals(localName))
 			{
 				this.currentItemAttributeToSet = TITLE_ATTRIBUTE;
 			}
-			else if ("link".equals(theLocalName))
+			else if ("link".equals(localName))
 			{
 				this.currentItemAttributeToSet = LINK_ATTRIBUTE;
 			}
-			else if ("description".equals(theLocalName))
+			else if ("description".equals(localName))
 			{
 				this.currentItemAttributeToSet = DESCRIPTION_ATTRIBUTE;
 			}
-			else if ("pubDate".equals(theLocalName))
+			else if ("pubDate".equals(localName))
 			{
 				this.currentItemAttributeToSet = PUBDATE_ATTRIBUTE;
 			}
@@ -90,9 +90,9 @@ public class RssFeedReader
 			}
 		}
 
-		public void endElement(String theNameSpace, String theLocalName, String theQName)
+		public void endElement(String nameSpace, String localName, String qName)
 		{
-			if ("item".equals(theLocalName))
+			if ("item".equals(localName))
 			{
 				// end of the item: add it to the document
 				this.rssFeedDocument.add(this.currentItem);
@@ -100,9 +100,9 @@ public class RssFeedReader
 			}
 		}
 
-		public void characters(char[] theCharacters, int theStartIndex, int theLength)
+		public void characters(char[] characters, int startIndex, int length)
 		{
-			String characters = new String(theCharacters, theStartIndex, theLength).trim();
+			String characters = new String(characters, startIndex, length).trim();
 			String trimedCharacters = characters.replace("\n", "");
 			if (!"".equals(trimedCharacters))
 			{
@@ -115,34 +115,34 @@ public class RssFeedReader
 			return this.rssFeedDocument;
 		}
 
-		private void setCurrentItemAttribute(String theValueOfTheAttribute)
+		private void setCurrentItemAttribute(String valueOfTheAttribute)
 		{
 			if (this.currentItem != null && this.currentItemAttributeToSet != -1)
 			{
 				if (this.currentItemAttributeToSet == TITLE_ATTRIBUTE)
 				{
-					this.currentItem.setTitle(theValueOfTheAttribute);
+					this.currentItem.setTitle(valueOfTheAttribute);
 				}
 				else if (this.currentItemAttributeToSet == DESCRIPTION_ATTRIBUTE)
 				{
-					this.currentItem.setDescription(theValueOfTheAttribute);
+					this.currentItem.setDescription(valueOfTheAttribute);
 				}
 				else if (this.currentItemAttributeToSet == LINK_ATTRIBUTE)
 				{
-					this.currentItem.setLink(theValueOfTheAttribute);
+					this.currentItem.setLink(valueOfTheAttribute);
 				}
 				else if (this.currentItemAttributeToSet == PUBDATE_ATTRIBUTE)
 				{
 					// TODO: USE A DateFormat
 					try
 					{
-						this.currentItem.setPubDate(this.rssFeedDateFormat.parse(theValueOfTheAttribute));
+						this.currentItem.setPubDate(this.rssFeedDateFormat.parse(valueOfTheAttribute));
 					}
 					catch (ParseException e)
 					{
 						this.currentItem.setPubDate(null);
 						// TODO: ADD A LOG INSTEAD OF SYSTEM.ERR OUTPUT
-						System.err.println("WARNING: publication date <" + theValueOfTheAttribute + "> does not follow the expected date format.");
+						System.err.println("WARNING: publication date <" + valueOfTheAttribute + "> does not follow the expected date format.");
 					}
 				}
 				else
@@ -156,18 +156,18 @@ public class RssFeedReader
 	private URL rssFeedUrl;
 	private DateFormat rssFeedDateFormat;
 	
-	public RssFeedReader(URL theRssFeedUrl, DateFormat theRssFeedDateFormat)
+	public RssFeedReader(URL rssFeedUrl, DateFormat rssFeedDateFormat)
 	{
-		if (theRssFeedUrl == null)
+		if (rssFeedUrl == null)
 		{
 			throw new IllegalArgumentException("URL of the RSS feed cannot be null.");
 		}
-		if (theRssFeedDateFormat == null)
+		if (rssFeedDateFormat == null)
 		{
 			throw new IllegalArgumentException("Date format for the RSS feed cannot be null.");
 		}
-		this.rssFeedUrl = theRssFeedUrl;
-		this.rssFeedDateFormat = theRssFeedDateFormat;
+		this.rssFeedUrl = rssFeedUrl;
+		this.rssFeedDateFormat = rssFeedDateFormat;
 	}
 
 	public RssFeedDocument getRssFeedDocument() throws IOException, SAXException

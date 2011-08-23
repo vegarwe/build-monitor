@@ -102,11 +102,11 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
 
 		/**
 		 * Create a new instance of the ActionListener.
-		 * @param theURI the URI to open in a web browser when the action is performed
+		 * @param URI the URI to open in a web browser when the action is performed
 		 */
-		public OpenURIInBrowserActionListener(URI theURI)
+		public OpenURIInBrowserActionListener(URI URI)
 		{
-			this.uri = theURI;
+			this.uri = URI;
 		}
 		
 		////////////////////////////
@@ -169,14 +169,14 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
 		
 		private ActionListener trayIconNewActionListener;
 		
-		public TrayIconUpdater(Image theNewIcon, String theNewIconTooltip, String theMessageCaption, String theMessageToDisplay, MessageType theMessageType, ActionListener theTrayIconNewActionListener)
+		public TrayIconUpdater(Image newIcon, String newIconTooltip, String messageCaption, String messageToDisplay, MessageType messageType, ActionListener trayIconNewActionListener)
 		{
-			this.newIcon = theNewIcon;
-			this.iconTooltip = theNewIconTooltip;
-			this.messageToDisplay = theMessageToDisplay;
-			this.messageCaption = theMessageCaption;
-			this.messageType = theMessageType;
-			this.trayIconNewActionListener = theTrayIconNewActionListener;
+			this.newIcon = newIcon;
+			this.iconTooltip = newIconTooltip;
+			this.messageToDisplay = messageToDisplay;
+			this.messageCaption = messageCaption;
+			this.messageType = messageType;
+			this.trayIconNewActionListener = trayIconNewActionListener;
 		}
 		
 		public void run()
@@ -229,13 +229,13 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
 		
 		/**
 		 * Create a new instance of the updater
-		 * @param theListOfBuildReportsOrderedByName the list of build reports to use
+		 * @param listOfBuildReportsOrderedByName the list of build reports to use
 		 * to update the system tray icon. It MUST be ordered by names (as when sorted
 		 * using the BuildReport.NameComparator comparator).
 		 */
-		public BuildStatusUpdater(List<BuildReport> theListOfBuildReportsOrderedByName)
+		public BuildStatusUpdater(List<BuildReport> listOfBuildReportsOrderedByName)
 		{
-			this.listOfBuildReportsOrderedByName = theListOfBuildReportsOrderedByName;
+			this.listOfBuildReportsOrderedByName = listOfBuildReportsOrderedByName;
 		}
 		
 		//////////////////////////
@@ -296,25 +296,25 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
 
 		/**
 		 * Create a new menu item for a build report
-		 * @param theBuildReport the build report to create a menu item for
-		 * @param theBuildFailedFont the Font to use for a menu item related to a failed build
-		 * @param theBuildSucessFont the Font to use for a menu item related to a successfull build
+		 * @param buildReport the build report to create a menu item for
+		 * @param buildFailedFont the Font to use for a menu item related to a failed build
+		 * @param buildSucessFont the Font to use for a menu item related to a successfull build
 		 * @return
 		 */
-		private MenuItem createNewMenuItemForBuildReport(BuildReport theBuildReport, Font theBuildFailedFont, Font theBuildSucessFont)
+		private MenuItem createNewMenuItemForBuildReport(BuildReport buildReport, Font buildFailedFont, Font buildSucessFont)
 		{
-			MenuItem newMenuItem = new MenuItem(getMenuItemLabelForBuildReport(theBuildReport));
-			if (theBuildReport.hasFailed())
+			MenuItem newMenuItem = new MenuItem(getMenuItemLabelForBuildReport(buildReport));
+			if (buildReport.hasFailed())
 			{
-				newMenuItem.setFont(theBuildFailedFont);
+				newMenuItem.setFont(buildFailedFont);
 				this.numberOfFailedBuilds++;
 			}
 			else
 			{
-				newMenuItem.setFont(theBuildSucessFont);
+				newMenuItem.setFont(buildSucessFont);
 			}
-			newMenuItem.setActionCommand(theBuildReport.getId());
-			newMenuItem.setName(theBuildReport.getName());
+			newMenuItem.setActionCommand(buildReport.getId());
+			newMenuItem.setName(buildReport.getName());
 			ActionListener newMenuItemActionListener = new ActionListener() {
 				public void actionPerformed(ActionEvent e)
 				{
@@ -337,13 +337,13 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
 		
 		/**
 		 * Build a MenuItem label for a build report.
-		 * @param theBuildReport the build report
-		 * @return a MenuItem label for theBuildReport
+		 * @param buildReport the build report
+		 * @return a MenuItem label for buildReport
 		 */
-		private String getMenuItemLabelForBuildReport(BuildReport theBuildReport)
+		private String getMenuItemLabelForBuildReport(BuildReport buildReport)
 		{
 			String howLongAgo = null;
-			Period ageOfTheBuild = new Period(new LocalDateTime(theBuildReport.getDate()), new LocalDateTime());
+			Period ageOfTheBuild = new Period(new LocalDateTime(buildReport.getDate()), new LocalDateTime());
 			// is it more than one year ago ?
 			if (ageOfTheBuild.getYears() > 0)
 			{
@@ -414,7 +414,7 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
 			}
 			
 			String failedIndicator = "";
-			if(theBuildReport.hasFailed())
+			if(buildReport.hasFailed())
          {
 			   failedIndicator = "- ";
          }
@@ -423,7 +423,7 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
             failedIndicator = "+ ";
          }
 			
-			return failedIndicator+ theBuildReport.getName() + "  (" + howLongAgo + ")";
+			return failedIndicator+ buildReport.getName() + "  (" + howLongAgo + ")";
 		}
 	}
 
@@ -470,7 +470,7 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
 
 	/**
 	 * Create a new instance of BuildMonitorImpl
-	 * @param theMonitorImplementationClass the implementation of Monitor to use
+	 * @param monitorImplementationClass the implementation of Monitor to use
 	 */
 	public BuildMonitorImpl(MonitorFactory monitorFactory)
 	{
@@ -685,9 +685,9 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
 	/**
 	 * {@inheritDoc}
 	 */
-	public void panic(String theErrorMessage)
+	public void panic(String errorMessage)
 	{
-		showErrorMessage(theErrorMessage);
+		showErrorMessage(errorMessage);
 		// TODO: OPEN NEW EMAIL WITH ERROR MESSAGE ?
 		System.exit(1);
 	}
@@ -695,18 +695,18 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
 	/**
 	 * {@inheritDoc}
 	 */
-	public void panic(Throwable theUnexpectedError)
+	public void panic(Throwable unexpectedError)
 	{
 		MessageFormat errorMessage = new MessageFormat(getMessage(MESSAGEKEY_UNEXPECTED_ERROR_MESSAGE));
-		panic(errorMessage.format(new Object[] {theUnexpectedError.getMessage(), getStackTrace(theUnexpectedError)}));
+		panic(errorMessage.format(new Object[] {unexpectedError.getMessage(), getStackTrace(unexpectedError)}));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public String getMessage(String theMessageKey)
+	public String getMessage(String messageKey)
 	{
-		return this.messages.getString(theMessageKey);
+		return this.messages.getString(messageKey);
 	}
 
 	/**
@@ -720,18 +720,18 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
 	/**
 	 * {@inheritDoc}
 	 */
-	public void reportMonitoringException(MonitoringException theMonitoringException)
+	public void reportMonitoringException(MonitoringException monitoringException)
 	{
 		// We only display the message if it is a new one (not the one currently displayed)
-		if ((this.currentlyReportedMonitoringException == null) || (!this.currentlyReportedMonitoringException.equals(theMonitoringException.getMessage())))
+		if ((this.currentlyReportedMonitoringException == null) || (!this.currentlyReportedMonitoringException.equals(monitoringException.getMessage())))
 		{
 			// We have two messages: the one to display in the alert bubble, and the one to display in the tray icon tooltip
-			String messageToDisplayInAlertBubble = theMonitoringException.getMessage();
-			String tooltipMessage = theMonitoringException.getMessage();
+			String messageToDisplayInAlertBubble = monitoringException.getMessage();
+			String tooltipMessage = monitoringException.getMessage();
 			// The default action listener to use for the tray icon when the error is displayed
 			ActionListener trayIconNewActionListener = this.openBuildServerHomePageActionListener;
 
-			if (theMonitoringException.isOptionsRelated())
+			if (monitoringException.isOptionsRelated())
 			{
 				// The error is related to the options set by the end user: we inform the user in the displayed messages that he can double click the alert
 				// bubble or the tray icon to open the options dialog
@@ -756,13 +756,13 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
 					tooltipMessage = tooltipMessage.substring(0, TOOLTIP_MAX_LENGTH - TRUNCATED_MESSAGE_SUFFIX.length() - 1) + TRUNCATED_MESSAGE_SUFFIX;
 				}
 				// If there is a related URI for the Exception, setup the tray icon action listener so that it opens it in a web browser
-				if (theMonitoringException.getRelatedURI() != null)
+				if (monitoringException.getRelatedURI() != null)
 				{
-					trayIconNewActionListener = new OpenURIInBrowserActionListener(theMonitoringException.getRelatedURI());
+					trayIconNewActionListener = new OpenURIInBrowserActionListener(monitoringException.getRelatedURI());
 				}
 			}
 			javax.swing.SwingUtilities.invokeLater(new TrayIconUpdater(this.monitoringExceptionIcon, tooltipMessage, "Build Monitor need your attention", messageToDisplayInAlertBubble, MessageType.ERROR, trayIconNewActionListener));
-			this.currentlyReportedMonitoringException = theMonitoringException.getMessage();
+			this.currentlyReportedMonitoringException = monitoringException.getMessage();
 		}
 	}
 
@@ -782,11 +782,11 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
 	 * TODO: TRES TRES CHAUD... A TESTER DE MANIERE AUTOMATISEE !!!!
 	 * {@inheritDoc}
 	 */
-	public void updateBuildStatus(List<BuildReport> theBuildsStatus)
+	public void updateBuildStatus(List<BuildReport> buildsStatus)
 	{
 		// 1) Sort the list of build reports according to user preferences (as set using the sort menu)
 		// TODO: POUVOIR AUSSI TRIER LA LISTE PAR AGE, EN FONCTION DE L'OPTION CHOISIE PAR L'UTILISATEUR
-		List<BuildReport> buildsStatus = new ArrayList<BuildReport>(theBuildsStatus);
+		List<BuildReport> buildsStatus = new ArrayList<BuildReport>(buildsStatus);
 		if (this.currentSortOrder == SORT_BY_NAME)
 		{
 			Collections.sort(buildsStatus, new BuildReport.NameComparator());
@@ -806,7 +806,7 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
 		// 4) If situation have changed, notify the end user !
 		StringBuffer newFailingBuilds = new StringBuffer();
 		StringBuffer fixedBuilds = new StringBuffer();
-		for (BuildReport currentBuildReport : theBuildsStatus)
+		for (BuildReport currentBuildReport : buildsStatus)
 		{
 			for (BuildReport previousBuildReport : this.previousBuildReports)
 			{
@@ -841,29 +841,29 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
 
 	/**
 	 * displays an error message in a dialog.
-	 * @param theErrorMessage the error message to display
+	 * @param errorMessage the error message to display
 	 */
-	protected void showErrorMessage(String theErrorMessage)
+	protected void showErrorMessage(String errorMessage)
 	{
 		if (this.messages != null)
 		{
-			JOptionPane.showMessageDialog(null, theErrorMessage, getMessage(MESSAGEKEY_ERROR_DIALOG_TITLE), JOptionPane.ERROR_MESSAGE);		
+			JOptionPane.showMessageDialog(null, errorMessage, getMessage(MESSAGEKEY_ERROR_DIALOG_TITLE), JOptionPane.ERROR_MESSAGE);		
 		}
 		else
 		{
-			JOptionPane.showMessageDialog(null, theErrorMessage, "Arghhhhhhhhh !", JOptionPane.ERROR_MESSAGE);		
+			JOptionPane.showMessageDialog(null, errorMessage, "Arghhhhhhhhh !", JOptionPane.ERROR_MESSAGE);		
 		}
 	}
 	
 	/**
 	 * Return the stack trace of a throwable as a String
-	 * @param theThrowable
+	 * @param throwable
 	 * @return
 	 */
-	protected String getStackTrace(Throwable theThrowable)
+	protected String getStackTrace(Throwable throwable)
 	{
 		StringBuffer buffer = new StringBuffer();
-		StackTraceElement[] stackElements = theThrowable.getStackTrace();
+		StackTraceElement[] stackElements = throwable.getStackTrace();
 		for (int i=0; i < stackElements.length; i++)
 		{
 			buffer.append(stackElements[i] + "\n");

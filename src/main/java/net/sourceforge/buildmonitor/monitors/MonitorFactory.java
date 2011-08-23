@@ -30,9 +30,9 @@ public class MonitorFactory
 {
 	private String monitorName;
 
-	public MonitorFactory(String theMonitorName)
+	public MonitorFactory(String monitorName)
 	{
-		this.monitorName = theMonitorName;
+		this.monitorName = monitorName;
 	}
 
 	public Monitor getMonitor(BuildMonitorImpl impl) throws java.io.FileNotFoundException, java.io.IOException

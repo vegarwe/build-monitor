@@ -39,25 +39,25 @@ public interface BuildMonitor
 	/**
 	 * The method to call when an unrecoverable error occurs in the application. It displays
 	 * an error message to the end user and then exit.
-	 * @param theUnexpectedProblem the Throwable that was unexpected.
+	 * @param unexpectedProblem the Throwable that was unexpected.
 	 */
-	void panic(Throwable theUnexpectedProblem);
+	void panic(Throwable unexpectedProblem);
 
 	/**
 	 * The method to call when an unrecoverable error occurs in the application and you want
 	 * to display your own message (instead of a generic one).It displays your error message
 	 * to the end user and then exit.
-	 * @param theErrorMessage the error message to display to the end user.
+	 * @param errorMessage the error message to display to the end user.
 	 */
-	void panic(String theErrorMessage);
+	void panic(String errorMessage);
 
 	/**
 	 * Get a message identified by its key in the application resource bundle.
 	 * The available messages key for the application all begins with prefix MESSAGEKEY_.
-	 * @param theMessageKey the message key
+	 * @param messageKey the message key
 	 * @return the message
 	 */
-	String getMessage(String theMessageKey);
+	String getMessage(String messageKey);
 	
 	/**
 	 * Returns the default icon to be displayed by dialogs opened by monitors
@@ -69,18 +69,18 @@ public interface BuildMonitor
 	 * Update the build status (this method is called by build monitors to update the GUI when
 	 * the build status has changed).
 	 * 
-	 * @param theBuildsStatus a List that contains the each build report to use to update the
+	 * @param buildsStatus a List that contains the each build report to use to update the
 	 * global status.
 	 */
-	void updateBuildStatus(List<BuildReport> theBuildsStatus);
+	void updateBuildStatus(List<BuildReport> buildsStatus);
 	
 	/**
 	 * Report a monitoring exception (this method is called by build monitors to notify that
 	 * a monitoring exception occured)
 	 * 
-	 * @param theMonitoringException the monitoring exception to display to the end user
+	 * @param monitoringException the monitoring exception to display to the end user
 	 */
-	void reportMonitoringException(MonitoringException theMonitoringException);
+	void reportMonitoringException(MonitoringException monitoringException);
 	
 	/**
 	 * Report an update of the monitor configuration to be taken into account immediately

@@ -149,15 +149,15 @@ public class BuildReport
 	
 	/**
 	 * Create a new instance from an id, a status and a date
-	 * @param theId the id of the build
-	 * @param theDate the date of the build
-	 * @param theStatus the status of the build
+	 * @param id the id of the build
+	 * @param date the date of the build
+	 * @param status the status of the build
 	 */
-	public BuildReport(String theId, Date theDate, Status theStatus)
+	public BuildReport(String id, Date date, Status status)
 	{
-		this.id = theId;
-		this.date = theDate;
-		this.status = theStatus;
+		this.id = id;
+		this.date = date;
+		this.status = status;
 	}
 	
 	/**
@@ -171,11 +171,11 @@ public class BuildReport
 
 	/**
 	 * Set the date of the build
-	 * @param theDateOfTheBuild the date of the build
+	 * @param dateOfTheBuild the date of the build
 	 */
-	public void setDate(Date theDateOfTheBuild)
+	public void setDate(Date dateOfTheBuild)
 	{
-		this.date = theDateOfTheBuild;
+		this.date = dateOfTheBuild;
 	}
 
 	/**
@@ -189,11 +189,11 @@ public class BuildReport
 
 	/**
 	 * Set the id of the build
-	 * @param theIdOfTheBuild
+	 * @param idOfTheBuild
 	 */
-	public void setId(String theIdOfTheBuild)
+	public void setId(String idOfTheBuild)
 	{
-		this.id = theIdOfTheBuild;
+		this.id = idOfTheBuild;
 	}
 
 	/**
@@ -207,11 +207,11 @@ public class BuildReport
 	
 	/**
 	 * Set the name of the build
-	 * @param theName
+	 * @param name
 	 */
-	public void setName(String theName)
+	public void setName(String name)
 	{
-		this.name = theName;
+		this.name = name;
 	}
 
 	/**
@@ -225,11 +225,11 @@ public class BuildReport
 
 	/**
 	 * Set the status of the build
-	 * @param theStatusOfTheBuild the statud of the build
+	 * @param statusOfTheBuild the statud of the build
 	 */
-	public void setStatus(Status theStatusOfTheBuild)
+	public void setStatus(Status statusOfTheBuild)
 	{
-		this.status = theStatusOfTheBuild;
+		this.status = statusOfTheBuild;
 	}
 
 	/**

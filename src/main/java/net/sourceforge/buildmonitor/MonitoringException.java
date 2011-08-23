@@ -37,85 +37,85 @@ public class MonitoringException extends Exception
 	/**
 	 * Create a new instance of the exception not related to a bad option (user parameter) of the monitor.
 	 * 
-	 * @param theMessage the message that explains the exception
-	 * @param theCause the cause of the exception
-	 * @param theRelatedURI an URI that could be opened in a browser by the end user to resolve the problem.
+	 * @param message the message that explains the exception
+	 * @param cause the cause of the exception
+	 * @param relatedURI an URI that could be opened in a browser by the end user to resolve the problem.
 	 */
-	public MonitoringException(String theMessage, Throwable theCause, URI theRelatedURI)
+	public MonitoringException(String message, Throwable cause, URI relatedURI)
 	{
-		super(theMessage, theCause);
-		this.customRelatedURI = theRelatedURI;
+		super(message, cause);
+		this.customRelatedURI = relatedURI;
 	}
 
 	/**
 	 * Create a new instance of the exception not related to a bad option (user parameter) of the monitor.
 	 * 
-	 * @param theMessage the message that explains the exception
-	 * @param theRelatedURI an URI that could be opened in a browser by the end user to resolve the problem.
+	 * @param message the message that explains the exception
+	 * @param relatedURI an URI that could be opened in a browser by the end user to resolve the problem.
 	 */
-	public MonitoringException(String theMessage, URI theRelatedURI)
+	public MonitoringException(String message, URI relatedURI)
 	{
-		super(theMessage);
-		this.customRelatedURI = theRelatedURI;
+		super(message);
+		this.customRelatedURI = relatedURI;
 	}
 
 	/**
 	 * Create a new instance of the exception not related to a bad option (user parameter) of the monitor.
 	 * 
-	 * @param theCause the cause of the exception
-	 * @param theRelatedURI an URI that could be opened in a browser by the end user to resolve the problem.
+	 * @param cause the cause of the exception
+	 * @param relatedURI an URI that could be opened in a browser by the end user to resolve the problem.
 	 */
-	public MonitoringException(Throwable theCause, URI theRelatedURI)
+	public MonitoringException(Throwable cause, URI relatedURI)
 	{
-		super(theCause);
-		this.customRelatedURI = theRelatedURI;
+		super(cause);
+		this.customRelatedURI = relatedURI;
 	}
 
 	/**
 	 * Create a new instance of the exception.
 	 * 
-	 * @param theMessage the message that explains the exception
-	 * @param theCause the cause of the exception
+	 * @param message the message that explains the exception
+	 * @param cause the cause of the exception
 	 * @param isOptionsRelated a boolean that signal if the error is related to a bad
 	 * option of the monitor
-	 * @param theRelatedURI if isOptionsRelated is false, an URI that could be opened
+	 * @param relatedURI if isOptionsRelated is false, an URI that could be opened
 	 * in a browser by the end user to resolve the problem.
 	 */
-	public MonitoringException(String theMessage, Throwable theCause, boolean isOptionsRelated, URI theRelatedURI)
+	public MonitoringException(String message, Throwable cause, boolean isOptionsRelated, URI relatedURI)
 	{
-		super(theMessage, theCause);
+		super(message, cause);
 		this.optionsRelated = isOptionsRelated;
-		this.customRelatedURI = theRelatedURI;
+		this.customRelatedURI = relatedURI;
 	}
 
 	/**
 	 * Create a new instance of the exception.
 	 * 
-	 * @param theMessage the message that explains the exception
+	 * @param message the message that explains the exception
 	 * @param isOptionsRelated a boolean that signal if the error is related to a bad
-	 * @param theRelatedURI if isOptionsRelated is false, an URI that could be opened
+	 * @param relatedURI if isOptionsRelated is false, an URI that could be opened
 	 * in a browser by the end user to resolve the problem.
 	 */
-	public MonitoringException(String theMessage, boolean isOptionsRelated, URI theRelatedURI)
+	public MonitoringException(String message, boolean isOptionsRelated, URI relatedURI)
 	{
-		super(theMessage);
+		super(message);
 		this.optionsRelated = isOptionsRelated;
-		this.customRelatedURI = theRelatedURI;
+		this.customRelatedURI = relatedURI;
 	}
 
 	/**
 	 * Create a new instance of the exception.
 	 * 
-	 * @param theCause the cause of the exception
+	 * @param cause the cause of the exception
 	 * @param isOptionsRelated a boolean that signal if the error is related to a bad
-	 * @param theRelatedURI if isOptionsRelated is false, an URI that could be opened
+	 * @param relatedURI if isOptionsRelated is false, an URI that could be opened
 	 * in a browser by the end user to resolve the problem.
 	 */
-	public MonitoringException(Throwable theCause, boolean isOptionsRelated, URI theRelatedURI)
+	public MonitoringException(Throwable cause, boolean isOptionsRelated, URI relatedURI)
 	{
-		super(theCause);
+		super(cause);
 		this.optionsRelated = isOptionsRelated;
-		this.customRelatedURI = theRelatedURI;
+		this.customRelatedURI = relatedURI;
 	}
 
 	/**

@@ -147,14 +147,14 @@ public class BambooMonitor implements Monitor
 	/**
 	 * {@inheritDoc}
 	 */
-	public URI getBuildURI(String theIdOfTheBuild)
+	public URI getBuildURI(String idOfTheBuild)
 	{
 		URI returnedValue = null;
 		try
 		{
 			synchronized (this.bambooProperties)
 			{
-				returnedValue = new URI(this.bambooProperties.getServerBaseUrl() + "/browse/" + theIdOfTheBuild);
+				returnedValue = new URI(this.bambooProperties.getServerBaseUrl() + "/browse/" + idOfTheBuild);
 			}
 		}
 		catch (URISyntaxException e)

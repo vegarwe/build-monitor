@@ -44,10 +44,10 @@ public interface Monitor extends Runnable
 	
 	/**
 	 * Return an URI to the dedicated page of a build on the monitored build system
-	 * @param theIdOfTheBuild the Id of the build (as in the BuildReport)
+	 * @param idOfTheBuild the Id of the build (as in the BuildReport)
 	 * @return an URI to the dedicated page of a build on the monitored build system
 	 */
-	public URI getBuildURI(String theIdOfTheBuild);
+	public URI getBuildURI(String idOfTheBuild);
 	
 	/**
 	 * Get the String to display as the first line of the Tooltip of the system tray icon.
