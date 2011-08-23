@@ -332,78 +332,15 @@ public class BambooMonitor implements Monitor
 	 * @throws BambooTicketNeedToBeRenewedError error thrown is the current bamboo authentication
 	 * ticket is not valid (anymore) and needs to be renewed.
 	 */
-	private String callBambooApi(URL theURL) throws MonitoringException, BambooTicketNeedToBeRenewedError
+	private String callBambooApi(URL theURL) throws MonitoringException
 	{
 		String returnedValue = null;
-		HttpURLConnection urlConnection = null;
-		BufferedReader urlConnectionReader = null;
 		try
 		{
-			// Call the Bamboo api and retrieve the server response
-			String authString = bambooProperties.getUsername() + ":" + bambooProperties.getPassword();
-			authString = new String(Base64.encodeBase64(authString.getBytes()));
-
-			urlConnection = (HttpURLConnection) theURL.openConnection();
-			urlConnection.setDoOutput(true);
-			urlConnection.setRequestProperty("Authorization", "Basic " + authString);
-			urlConnection.connect();
-			urlConnectionReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-			String line = null;
-			StringBuffer serverResponse = new StringBuffer();
-			while ((line = urlConnectionReader.readLine()) != null)
-			{
-				serverResponse.append(line);
-			}
-			// parse the server response
-			returnedValue = serverResponse.toString();
-			// TODO: IF THE SERVER INSTALLATION IS NOT FINISHED, AN HTML PAGE IS RETURNED BY THE URL... WE SHOULD TRY TO DETECT IF IT IS NOT THE CASE HERE !!!
-			if (returnedValue.contains("<title>Bamboo Setup Wizard - Atlassian Bamboo</title>"))
-			{
-				// TODO: OUVRIR BROWSER VERS L'INSTANCE BAMBOO ?
-				throw new MonitoringException("Your Bamboo server installation is not finished ! Double click here to complete the Bamboo Setup Wizard !", getMainPageURI());
-			}
-			InputSource is = new InputSource(new StringReader(serverResponse.toString()));
-			XPath xpath = XPathFactory.newInstance().newXPath();
-			String error = xpath.evaluate("/errors/error", is);
-			if (!"".equals(error))
-			{
-				if ("User not authenticated yet, or session timed out.".equals(error))
-				{
-					// A new authentication ticket should be requested !
-					throw new BambooTicketNeedToBeRenewedError();
-				}
-				else
-				{
-					boolean isErrorOptionsRelated = false;
-					URI uriForNonOptionsRelatedErrors = getMainPageURI();
-					if ("Invalid username or password.".equals(error))
-					{
-						isErrorOptionsRelated = true;
-					}
-					if ("The remote API has been disabled.".equals(error))
-					{
-						error += " Double click here to enable it.";
-						// Build the URI to the Bamboo general configuration setting page (BASE_SERVER_URL/admin/configure!default.action)
-						try
-						{
-							synchronized (this.bambooProperties)
-							{
-								uriForNonOptionsRelatedErrors = new URI(this.bambooProperties.getServerBaseUrl() + "/admin/configure!default.action");
-							}
-						}
-						catch (URISyntaxException e)
-						{
-							throw new RuntimeException(e);
-						}
-					}
-
-					throw new MonitoringException("Error reported by the Bamboo server: " + error, isErrorOptionsRelated, uriForNonOptionsRelatedErrors);
-				}
-			}
+			returnedValue = getServerResponse(theURL);
 		}
 		catch (ClassCastException e)
 		{
-			// This error should only occurs if the user has modified the properties file "by hand"
 			throw new MonitoringException("Problem: the base URL defined for the Bamboo server in Options is not an http URL.", true, null);
 		}
 		catch (UnknownHostException e)
@@ -422,17 +359,49 @@ public class BambooMonitor implements Monitor
 		{
 			throw new MonitoringException("Problem: network error, connection lost.", null);
 		}
-		catch (XPathExpressionException e)
+		catch (IOException e)
 		{
-			throw new MonitoringException("Problem: the Bamboo Server returned an unexpected content for attribute <error>: " + returnedValue, null);
+			if (e.getMessage().contains("Server returned HTTP response code: 401"))
+			{
+				throw new MonitoringException("Problem: Authentication failed. Please check your username and password", null);
+			}
+			else
+			{
+				throw new MonitoringException(e, null);
+			}
 		}
-		catch (MonitoringException e)
+
+		if (returnedValue.contains("<title>Bamboo Setup Wizard - Atlassian Bamboo</title>"))
 		{
-			throw e;
+			throw new MonitoringException("Your Bamboo server installation is not finished! Double click here to complete the Bamboo Setup Wizard !", getMainPageURI());
 		}
-		catch (Throwable t)
+
+		return returnedValue;
+	}
+
+	private String getServerResponse(URL theURL) throws IOException
+	{
+		String authString = bambooProperties.getUsername() + ":" + bambooProperties.getPassword();
+		authString = new String(Base64.encodeBase64(authString.getBytes()));
+
+		String returnedValue = null;
+		HttpURLConnection urlConnection = null;
+		BufferedReader urlConnectionReader = null;
+		try
 		{
-			throw new MonitoringException(t, null);
+			urlConnection = (HttpURLConnection) theURL.openConnection();
+			urlConnection.setDoOutput(true);
+			urlConnection.setRequestProperty("Authorization", "Basic " + authString);
+			urlConnection.connect();
+			urlConnectionReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+
+			String line = null;
+			StringBuffer serverResponse = new StringBuffer();
+			while ((line = urlConnectionReader.readLine()) != null)
+			{
+				serverResponse.append(line);
+			}
+			returnedValue = serverResponse.toString();
 		}
 		finally
 		{
