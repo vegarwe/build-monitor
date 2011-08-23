@@ -327,17 +327,16 @@ public class BambooMonitor implements Monitor
 	
 	/**
 	 * Call a bamboo REST api method and return the result (or throw a MonitoringException)
-	 * @param theURL
+	 * @param url
 	 * @return
-	 * @throws BambooTicketNeedToBeRenewedError error thrown is the current bamboo authentication
 	 * ticket is not valid (anymore) and needs to be renewed.
 	 */
-	private String callBambooApi(URL theURL) throws MonitoringException
+	private String callBambooApi(URL url) throws MonitoringException
 	{
 		String returnedValue = null;
 		try
 		{
-			returnedValue = getServerResponse(theURL);
+			returnedValue = getServerResponse(url);
 		}
 		catch (ClassCastException e)
 		{
@@ -345,11 +344,11 @@ public class BambooMonitor implements Monitor
 		}
 		catch (UnknownHostException e)
 		{
-			throw new MonitoringException("Problem: cannot find host " + theURL.getHost() + " on the network.", true, null);
+			throw new MonitoringException("Problem: cannot find host " + url.getHost() + " on the network.", true, null);
 		}
 		catch (ConnectException e)
 		{
-			throw new MonitoringException("Problem: cannot connect to port " + theURL.getPort() + " on host " + theURL.getHost() + ".", true, null);
+			throw new MonitoringException("Problem: cannot connect to port " + url.getPort() + " on host " + url.getHost() + ".", true, null);
 		}
 		catch (FileNotFoundException e)
 		{
@@ -379,7 +378,7 @@ public class BambooMonitor implements Monitor
 		return returnedValue;
 	}
 
-	private String getServerResponse(URL theURL) throws IOException
+	private String getServerResponse(URL url) throws IOException
 	{
 		String authString = bambooProperties.getUsername() + ":" + bambooProperties.getPassword();
 		authString = new String(Base64.encodeBase64(authString.getBytes()));
@@ -389,7 +388,7 @@ public class BambooMonitor implements Monitor
 		BufferedReader urlConnectionReader = null;
 		try
 		{
-			urlConnection = (HttpURLConnection) theURL.openConnection();
+			urlConnection = (HttpURLConnection) url.openConnection();
 			urlConnection.setDoOutput(true);
 			urlConnection.setRequestProperty("Authorization", "Basic " + authString);
 			urlConnection.connect();
