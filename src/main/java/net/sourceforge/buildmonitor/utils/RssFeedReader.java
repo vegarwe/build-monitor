@@ -100,9 +100,9 @@ public class RssFeedReader
 			}
 		}
 
-		public void characters(char[] characters, int startIndex, int length)
+		public void characters(char[] chars, int startIndex, int length)
 		{
-			String characters = new String(characters, startIndex, length).trim();
+			String characters = new String(chars, startIndex, length).trim();
 			String trimedCharacters = characters.replace("\n", "");
 			if (!"".equals(trimedCharacters))
 			{

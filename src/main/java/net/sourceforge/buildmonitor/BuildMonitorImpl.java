@@ -786,7 +786,7 @@ public class BuildMonitorImpl implements Runnable, BuildMonitor
 	{
 		// 1) Sort the list of build reports according to user preferences (as set using the sort menu)
 		// TODO: POUVOIR AUSSI TRIER LA LISTE PAR AGE, EN FONCTION DE L'OPTION CHOISIE PAR L'UTILISATEUR
-		List<BuildReport> buildsStatus = new ArrayList<BuildReport>(buildsStatus);
+		buildsStatus = new ArrayList<BuildReport>(buildsStatus);
 		if (this.currentSortOrder == SORT_BY_NAME)
 		{
 			Collections.sort(buildsStatus, new BuildReport.NameComparator());
